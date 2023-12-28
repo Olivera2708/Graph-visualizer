@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Graph visualizer</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="main-left">
+        <h1>Graph visualizer</h1>
+        <div class="small-views">
+            <div class="tree-view">
+
+            </div>
+            <div class="bird-view">
+
+            </div>
+        </div>
+    </div>
+    <div class="main-right">
+        <div class="search-filter">
+            <div class="file-search">
+                <div>
+                    <label>File:
+                      <input type="text">
+                    </label>
+                </div>
+                <div>
+                    <label>Search:
+                      <input type="text">
+                    </label>
+                </div>
+                <div>
+                    <label>Filter:
+                      <input type="text" class="bigger">
+                    </label>
+                </div>
+                <button class="action">Find</button>
+                <button class="action">Restart</button>
+            </div>
+            <div class="params">
+                <div class="param">
+                    <p class="param-name">Bear</p>
+                    <button class="btn"><i class="fa fa-close"></i></button>
+                </div>
+                <div class="param">
+                    <p class="param-name">predator = wolf</p>
+                    <button class="btn"><i class="fa fa-close"></i></button>
+                </div>
+                <div class="param">
+                    <p class="param-name">habitat = forest</p>
+                    <button class="btn"><i class="fa fa-close"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="main">
+
+        </div>
+    </div>
+</body>
+</html>
