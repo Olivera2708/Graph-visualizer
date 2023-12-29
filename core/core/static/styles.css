@@ -1,0 +1,120 @@
+html {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 25% 75%;
+}
+
+h1 {
+    margin: 0.8rem auto 0 2rem;
+}
+
+label {
+    font-size: 1.2rem;
+}
+
+input {
+    width: 65%;
+    font-size: 1.1rem;
+    margin-left: 0.2rem;
+    margin-right: 1rem;
+    background: whitesmoke;
+    border-radius: 0.5rem;
+    border: black solid 1px;
+}
+
+.action {
+    margin: 0 0.5rem 0 0.5rem;
+    background: #fae0c3;
+    border-radius: 0.5rem;
+    border: black solid 1px;
+}
+
+.action:hover {
+    background: #fcd0a7;
+    border-radius: 0.5rem;
+    border: black solid 1px;
+}
+
+.main-left{
+    height: 100%;
+    background: #F4EAE0;
+    border-right: black solid 1px;
+}
+
+.main-right{
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-rows: 12% 88%;
+}
+
+.small-views{
+    height: 88%;
+    margin: 1rem 1rem 1rem 1rem;
+    display: grid;
+    grid-template-rows: 56% 43%;
+    row-gap: 1rem;
+}
+
+.tree-view{
+    height: 100%;
+    width: 100%;
+    border-radius: 1rem;
+    background: whitesmoke;
+    border: black solid 1px;
+}
+
+.bird-view{
+    height: 100%;
+    width: 100%;
+    border-radius: 1rem;
+    background: whitesmoke;
+    border: black solid 1px;
+}
+
+.search-filter{
+    height: fit-content;
+    background: #FAF6F0;
+    border-bottom: black solid 1px;
+}
+
+.file-search {
+    margin: 0.8rem 1rem 0 1rem;
+    display: grid;
+    grid-template-columns: 25% 25% 34% 8% 8%;
+}
+
+.params {
+    white-space: nowrap;
+    margin: 0.5rem 0 0.5rem 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.param {
+    margin: 0.2rem 0.5rem 0.2rem 0.5rem;
+    background: #fae0c3;
+    display: flex;
+    border-radius: 0.5rem;
+    border: black solid 1px;
+}
+
+.param:hover {
+    background: #fad5b9;
+}
+
+.param-name {
+    margin: 0.3rem 0.5rem 0.3rem 0.5rem;
+}
+
+.btn {
+    background: transparent;
+    border: none;
+}
