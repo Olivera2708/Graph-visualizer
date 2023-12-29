@@ -1,3 +1,60 @@
-from django.db import models
+class NodeAttribute():
 
-# Create your models here.
+    id = 0
+
+    def __init__(self, name : str, value : object):
+        super().__init__()
+        self.name = name
+        self.value = value
+        self.id = NodeAttribute.id
+        NodeAttribute.id += 1
+
+    def __str__(self):
+        return self.name + ": " + self.value.__str__()
+
+
+class Node():
+
+    id = 0
+
+    def __init__(self, name : str):
+        super().__init__()
+        self.name = name
+        self.attributes = []
+        self.id = Node.id
+        Node.id += 1
+
+    def add_attribute(self, name: str, value: object):
+        self.attributes.append(NodeAttribute(name, value))
+
+
+class Edge():
+
+    id = 0
+
+    def __init__(self, directed: bool, fromNode: Node, toNode: Node, type: str):
+        super().__init__()
+        self.directed = directed
+        self.fromNode = fromNode
+        self.toNode = toNode
+        self.type = type
+        self.id = Edge.id
+        Edge.id += 1
+
+
+class Graph():
+
+    id = 0
+
+    def __init__(self):
+        super().__init__()
+        self.nodes = []
+        self.edges = []
+        self.id = Graph.id
+        Graph.id += 1
+
+    def add_node(self, node: Node):
+        self.nodes.append(node)
+
+    def add_edge(self, edge: Edge):
+        self.edges.append(edge)
