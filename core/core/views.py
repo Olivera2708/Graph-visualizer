@@ -8,6 +8,7 @@ def initial(request):
 
 def view(request):
     config = apps.get_app_config('core')
+    config.load_plugins()
     data_source_plugins = config.data_source_plugins
     visualizer_plugins = config.visualizer_plugins
     return redirect('home')
