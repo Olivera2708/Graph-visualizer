@@ -19,7 +19,6 @@ def load_plugins_from_group(name: str):
     for entry in pkg_resources.iter_entry_points(group=name):
         print(f"Found {entry.name} plugin")
         p = entry.load()
-        print("{} {}".format(entry.name, p))
         plugin = p()
         plugins.append(plugin)
     return plugins
