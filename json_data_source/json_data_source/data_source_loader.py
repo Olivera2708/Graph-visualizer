@@ -3,6 +3,9 @@ import json
 
 
 class JsonDataSourceLoader(DataSourceService):
+
+    def id(self):
+        pass
     def name(self):
         return "json"
 
