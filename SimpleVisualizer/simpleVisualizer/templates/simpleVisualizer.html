@@ -1,0 +1,101 @@
+{% block style %}
+    <style>
+
+        .node {
+            cursor: pointer;
+            color: #3182bd;
+        }
+
+        .link {
+            fill: none;
+            stroke: #9ecae1;
+            stroke-width: 1.5px;
+        }
+
+        div.detailsDisplay {
+            font-size: 13px;
+            position: absolute;
+            padding: 20px;
+            background-color: #dedded;
+            border: 1px solid #969696;
+            border-radius: 30px;
+            box-shadow: 10px 5px 20px 3px #969696;
+            pointer-events: none;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div>
+        <svg height="700" width="900">
+        </svg>
+    </div>
+
+    <script>
+        nodes =
+            {
+                {%  for node in nodes %}
+                    "node_{{ node.id }}":
+                        {
+                            id: "node_{{ node.id }}",
+                            name: "{{ node.name }}",
+                            attributes: [
+                                {% for attribute in node.attributes %}
+                                    {
+                                        id: "attribute_{{ attribute.id }}",
+                                        name: "{{ attribute.name }}",
+                                        value: "{{ attribute.value }}"
+                                    },
+                                {% endfor %}
+                            ]
+                        },
+                {% endfor %}
+            };
+
+        edges = [
+            {%  for edge in edges %}
+                {
+                    id: "edge_{{ edge.id }}",
+                    directed: false,
+                    source: "node_{{edge.fromNode.id}}",
+                    target: "node_{{edge.toNode.id}}",
+                    type: "type"
+                },
+            {% endfor %}
+        ]
+
+        edges.forEach(function (edge) {
+            edge.source = nodes[edge.source];
+            edge.target = nodes[edge.target];
+        });
+
+        var force = d3.layout.force()
+            .size([650, 850])
+            .nodes(d3.values(nodes))
+            .links(edges)
+            .linkDistance(200)
+            .charge(-100)
+            .start();
+
+
+        var svg = d3.select('svg');
+
+        // Stvarno iscrtavanje linkova koji su prikazani linijama.
+        var link = svg.selectAll('.link')
+            .data(force.links())
+            .enter().append('line')
+            .attr('class', 'link');
+
+        var div = d3.select('body').append('div')
+            .attr('class', 'detailsDisplay')
+            .style('opacity', 0);
+
+        // Stvarno iscrtavanje cvorova reprezentovanih g tagom.
+        var node = svg.selectAll('.node')
+            .data(force.nodes()) //add
+            .enter().append('circle')
+            .attr('class', 'node')
+            .attr('r', 10)
+            .style('fill', 'red');
+    </script>
+{% endblock %}
