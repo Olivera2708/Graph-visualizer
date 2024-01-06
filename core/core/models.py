@@ -1,8 +1,7 @@
-class NodeAttribute():
-
+class NodeAttribute:
     id = 0
 
-    def __init__(self, name : str, value : object):
+    def __init__(self, name: str, value: object):
         super().__init__()
         self.name = name
         self.value = value
@@ -13,11 +12,10 @@ class NodeAttribute():
         return self.name + ": " + self.value.__str__()
 
 
-class Node():
-
+class Node:
     id = 0
 
-    def __init__(self, name : str):
+    def __init__(self, name: str):
         super().__init__()
         self.name = name
         self.attributes = []
@@ -27,9 +25,14 @@ class Node():
     def add_attribute(self, name: str, value: object):
         self.attributes.append(NodeAttribute(name, value))
 
+    def __str__(self):
+        string = self.name + "\n"
+        for attribute in self.attributes:
+            string += "\t" + attribute.__str__() + "\n"
+        return string
 
-class Edge():
 
+class Edge:
     id = 0
 
     def __init__(self, directed: bool, fromNode: Node, toNode: Node, type: str):
@@ -41,9 +44,11 @@ class Edge():
         self.id = Edge.id
         Edge.id += 1
 
+    def __str__(self):
+        return self.fromNode.name + "->" + self.toNode.name
 
-class Graph():
 
+class Graph:
     id = 0
 
     def __init__(self):
@@ -58,3 +63,11 @@ class Graph():
 
     def add_edge(self, edge: Edge):
         self.edges.append(edge)
+
+    def __str__(self):
+        string = ""
+        for node in self.nodes:
+            string += node.__str__() + "\n"
+        for edge in self.edges:
+            string += edge.__str__() + "\n"
+        return string

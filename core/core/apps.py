@@ -9,15 +9,16 @@ class CoreConfig(AppConfig):
     visualizer_plugins = []
 
     def load_plugins(self):
-        self.data_source_plugins = load_plugins_from_group("core.data_source")
-        self.visualizer_plugins = load_plugins_from_group("core.visualizer")
+        self.data_source_plugins = load_plugins_from_group("data_source")
+        self.visualizer_plugins = load_plugins_from_group("visualizer")
 
 
 def load_plugins_from_group(name: str):
     plugins = []
+    print(f"Loading {name} plugins...")
     for entry in pkg_resources.iter_entry_points(group=name):
+        print(f"Found {entry.name} plugin")
         p = entry.load()
-        print("{} {}".format(entry.name, p))
         plugin = p()
         plugins.append(plugin)
     return plugins
