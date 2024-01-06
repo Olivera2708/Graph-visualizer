@@ -32,7 +32,7 @@ def view(request):
     visualizer_plugins = config.visualizer_plugins
 
     graph = start_source_plugins(data_source_plugins, file_name)
-    print(graph)
+
     return redirect('home')
 
 

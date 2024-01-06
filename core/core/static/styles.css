@@ -84,7 +84,7 @@ input {
 }
 
 .file-search {
-    margin: 0.8rem 1rem 0 1rem;
+    padding: 0.8rem 1rem 0 1rem;
     display: grid;
     grid-template-columns: 12% 13% 28% 40% 8%;
 }
