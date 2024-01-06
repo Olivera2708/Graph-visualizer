@@ -1,22 +1,8 @@
 from django.shortcuts import render, redirect
-from django.apps.registry import apps
-import os
 from django.contrib import messages
 import traceback
-from .models import *
-
-node1 = Node("NAMEEEEEEEEEEEEEEEEEE")
-node2 = Node("name2")
-node3 = Node("name3")
-
-node1.add_attribute("naziv1", "vrednost1")
-node1.add_attribute("naziv2", "vrednost2")
-node2.add_attribute("naziv3", "vrednost3")
-node3.add_attribute("naziv4", "vrednost4")
-
-edge1 = Edge(True, node1, node2, "type")
-edge2 = Edge(False, node1, node3, "type")
-
+from django.apps import apps
+import os
 
 def initial(request):
     return render(request, 'index.html')
@@ -27,9 +13,10 @@ def view(request):
     config.load_plugins()
     data_source_plugins = config.data_source_plugins
     visualizer_plugins = config.visualizer_plugins
+    graph = start_source_plugins(data_source_plugins, "data.json")
     try:
-        html = run_visualisation_plugins(visualizer_plugins, request)
-        nodes, edges = [node1, node2, node3], [edge1, edge2]
+        html = run_visualisation_plugins(visualizer_plugins, request, graph)
+        nodes, edges = graph.nodes, graph.edges
         return render(request, "index.html", {"template": html, "nodes": nodes, "edges": edges})
     except FileNotFoundError:
         messages.error(request, "File doesn't exist!")
@@ -38,10 +25,20 @@ def view(request):
         traceback.print_exc()
         return redirect('home')
 
-def run_visualisation_plugins(visualisation_plugins, request):
+def run_visualisation_plugins(visualisation_plugins, request, graph):
     for plugin in visualisation_plugins:
         # if plugin.name() == request.POST['visualizer']:
         global template
         template = plugin.load()
-    html = template.render(nodes=[node1, node2, node3], edges=[edge1, edge2])
+    html = template.render(nodes=graph.nodes, edges=graph.edges)
     return html
+
+def start_source_plugins(source_plugins, file_name):
+    for plugin in source_plugins:
+        if plugin.name() == file_name.split(".")[1]:
+            return plugin.load_data(get_path(file_name))
+
+def get_path(file_name):
+    file_path = "core/core/static/" + file_name
+    absolute_file_path = os.path.abspath(file_path)
+    return absolute_file_path
