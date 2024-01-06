@@ -49,7 +49,6 @@
             </defs>
         </svg>
     </div>
-
     <script>
         const map = new Map();
         nodes =
@@ -98,7 +97,16 @@
             .charge(-100)
             .start();
 
-        var svg = d3.select('svg');
+        var svg = d3.select('svg')
+            .call(d3.behavior.zoom().on("zoom", function () {
+                if (d3.event.sourceEvent && d3.event.sourceEvent.type === "mousedown") {
+                    // Disable zoom during drag
+                    return;
+                }
+                console.log("okida se dogadjaj")
+                svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
+            }))
+            .append("g");
 
         var link = svg.selectAll('.link')
             .data(edges)
@@ -113,11 +121,31 @@
             .attr('class', 'node')
             .attr('id', function (d) {
                 return d.id;
-            });
+            })
+            .on('click', function(d) {
+                d3.event.stopPropagation(); // Prevent the click event from propagating to the svg container
+            })
+            .call(force.drag);
 
         d3.selectAll('.node').each(function (d) {
             showGraph(d);
         });
+
+                var drag = d3.behavior.drag()
+            .on("dragstart", function (d) {
+                d3.event.sourceEvent.stopPropagation(); // Prevent the dragstart event from propagating to the svg container
+                d.fixed = true; // Fix the node in place during dragging
+            })
+            .on("drag", function (d) {
+                d.x += d3.event.dx;
+                d.y += d3.event.dy;
+                tick(); // Update the node positions during dragging
+            })
+            .on("dragend", function (d) {
+                d.fixed = false; // Release the fixed position after dragging
+            });
+
+        node.call(drag);
 
         function showGraph(d) {
             var textSize = 20;
@@ -165,7 +193,7 @@
             var height = 30;
             node.attr("transform", function (d) {
                 return "translate(" + d.x + "," + d.y + ")";
-            }).call(force.drag);
+            });
 
             link.attr('x1', function (d) {
                 width = map.get(d.source.id);
