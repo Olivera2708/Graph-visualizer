@@ -18,7 +18,7 @@ class JsonDataSourceLoader(DataSourceService):
         node_attributes = []
         for el in data:
             if el != "predators":
-                node_attribute = NodeAttribute(el, data[el])
+                node_attribute = NodeAttribute(el, data[el].replace('"', ''))
                 node_attributes.append(node_attribute)
         return node_attributes
 
