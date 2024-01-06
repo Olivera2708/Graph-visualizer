@@ -5,16 +5,16 @@ from django.contrib import messages
 import traceback
 from .models import *
 
-node1 = Node("name1")
-node2 = Node("name1")
-node3 = Node("name1")
+node1 = Node("NAMEEEEEEEEEEEEEEEEEE")
+node2 = Node("name2")
+node3 = Node("name3")
 
-node1.add_attribute("naziv", "vrednost")
-node1.add_attribute("naziv", "vrednost")
-node2.add_attribute("naziv", "vrednost")
-node3.add_attribute("naziv", "vrednost")
+node1.add_attribute("naziv1", "vrednost1")
+node1.add_attribute("naziv2", "vrednost2")
+node2.add_attribute("naziv3", "vrednost3")
+node3.add_attribute("naziv4", "vrednost4")
 
-edge1 = Edge(False, node1, node2, "type")
+edge1 = Edge(True, node1, node2, "type")
 edge2 = Edge(False, node1, node3, "type")
 
 

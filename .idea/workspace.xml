@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad7227e1-5ede-41dd-ae7e-b825028b81c4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Graph-visualizer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Graph-visualizer.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/core/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/core/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/simpleVisualizer/templates/simpleVisualizer.html" beforeDir="false" afterPath="$PROJECT_DIR$/SimpleVisualizer/simpleVisualizer/templates/simpleVisualizer.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/core/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

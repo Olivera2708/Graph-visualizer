@@ -1,15 +1,29 @@
 {% block style %}
     <style>
+        svg {
+            width: 100%;
+            height: 85vh;
+        }
 
         .node {
             cursor: pointer;
-            color: #3182bd;
         }
 
         .link {
             fill: none;
-            stroke: #9ecae1;
-            stroke-width: 1.5px;
+            stroke: #ab7646;
+            stroke-width: 2px;
+        }
+
+        .link-directed {
+            fill: none;
+            stroke: #a18265;
+            stroke-width: 2px;
+            marker-end: url(#arrow);
+        }
+
+        path {
+            fill: #a18265;
         }
 
         div.detailsDisplay {
@@ -27,7 +41,12 @@
 
 {% block content %}
     <div>
-        <svg height="700" width="900">
+        <svg>
+            <defs>
+                <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z"></path>
+                </marker>
+            </defs>
         </svg>
     </div>
 
@@ -56,7 +75,7 @@
             {%  for edge in edges %}
                 {
                     id: "edge_{{ edge.id }}",
-                    directed: false,
+                    directed: "{{ edge.directed }}",
                     source: "node_{{edge.fromNode.id}}",
                     target: "node_{{edge.toNode.id}}",
                     type: "type"
@@ -70,32 +89,81 @@
         });
 
         var force = d3.layout.force()
-            .size([650, 850])
+            .size([900, 700])
             .nodes(d3.values(nodes))
             .links(edges)
-            .linkDistance(200)
+            .on("tick", tick)
+            .linkDistance(300)
             .charge(-100)
             .start();
 
-
         var svg = d3.select('svg');
 
-        // Stvarno iscrtavanje linkova koji su prikazani linijama.
         var link = svg.selectAll('.link')
-            .data(force.links())
+            .data(edges)
             .enter().append('line')
-            .attr('class', 'link');
+            .attr('class', function (d) {
+                return d.directed === "True" ? 'link-directed' : 'link';
+            });
 
-        var div = d3.select('body').append('div')
-            .attr('class', 'detailsDisplay')
-            .style('opacity', 0);
-
-        // Stvarno iscrtavanje cvorova reprezentovanih g tagom.
         var node = svg.selectAll('.node')
-            .data(force.nodes()) //add
-            .enter().append('circle')
+            .data(force.nodes())
+            .enter().append('g')
             .attr('class', 'node')
-            .attr('r', 10)
-            .style('fill', 'red');
+            .attr('id', function (d) {
+                return d.id;
+            });
+
+        d3.selectAll('.node').each(function (d) {
+            showGraph(d);
+        });
+
+        function showGraph(d) {
+            var width = 150;
+            var textSize = 20;
+            height = textSize + 10;
+
+            d3.select("g#" + d.id)
+                .append('rect')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', width)
+                .attr('height', height)
+                .attr('rx', 10)
+                .attr('ry', 10)
+                .attr('fill', '#fae0c3');
+
+            d3.select("g#" + d.id)
+                .append('text')
+                .attr('x', width / 2)
+                .attr('y', 21)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', textSize)
+                .attr('font-family', 'sans-serif')
+                .attr('fill', 'black')
+                .text(d.name);
+        }
+
+        function tick(e) {
+            var width = 150;
+            var height = 30;
+            node.attr("transform", function (d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            }).call(force.drag);
+
+            link.attr('x1', function (d) {
+                return d.source.x + width;
+            })
+                .attr('y1', function (d) {
+                    return d.source.y + height / 2;
+                })
+                .attr('x2', function (d) {
+                    return d.target.x;
+                })
+                .attr('y2', function (d) {
+                    return d.target.y + height / 2;
+                });
+
+        }
     </script>
 {% endblock %}
