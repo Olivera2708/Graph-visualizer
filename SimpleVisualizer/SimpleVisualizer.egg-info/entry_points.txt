@@ -1,3 +1,0 @@
-[visualizer]
-load_json = simpleVisualizer.simpleVisualizer:SimpleVisualizer
-
