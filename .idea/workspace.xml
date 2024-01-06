@@ -6,13 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="bb83a6bf-643c-431d-91f5-9055a64273b9" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source.egg-info/PKG-INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source.egg-info/SOURCES.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source.egg-info/dependency_links.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source.egg-info/entry_points.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source.egg-info/not-zip-safe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source.egg-info/top_level.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source/data_source_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/json_data_source/json_data_source/data_source_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/SimpleVisualizer/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/simpleVisualizer/simpleVisualizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/SimpleVisualizer/simpleVisualizer/simpleVisualizer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/simpleVisualizer/templates/simpleVisualizer.html" beforeDir="false" afterPath="$PROJECT_DIR$/SimpleVisualizer/simpleVisualizer/templates/simpleVisualizer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/json_data_source/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/json_data_source/setup.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

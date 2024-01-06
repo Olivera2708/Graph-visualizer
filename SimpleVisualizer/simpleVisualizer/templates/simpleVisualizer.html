@@ -51,6 +51,7 @@
     </div>
 
     <script>
+        const map = new Map();
         nodes =
             {
                 {%  for node in nodes %}
@@ -119,9 +120,22 @@
         });
 
         function showGraph(d) {
-            var width = 150;
             var textSize = 20;
             height = textSize + 10;
+
+            var textElement = d3.select("g#" + d.id)
+                .append('text')
+                .attr('x', 0)
+                .attr('y', 21)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', textSize)
+                .attr('font-family', 'sans-serif')
+                .attr('fill', 'black')
+                .text(d.name);
+
+            var width = textElement.node().getBBox().width + 20;
+
+            map.set(d.id, width);
 
             d3.select("g#" + d.id)
                 .append('rect')
@@ -132,6 +146,8 @@
                 .attr('rx', 10)
                 .attr('ry', 10)
                 .attr('fill', '#fae0c3');
+
+            textElement.remove();
 
             d3.select("g#" + d.id)
                 .append('text')
@@ -152,8 +168,10 @@
             }).call(force.drag);
 
             link.attr('x1', function (d) {
+                width = map.get(d.source.id);
+
                 return d.source.x + width;
-            })
+                })
                 .attr('y1', function (d) {
                     return d.source.y + height / 2;
                 })
