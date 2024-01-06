@@ -6,58 +6,61 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-</head>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+    <script src="https://d3js.org/d3-selection-multi.v1.min.js"></script></head>
 <body>
-    <div class="main-left">
-        <h1>Graph visualizer</h1>
-        <div class="small-views">
-            <div class="tree-view">
+<div class="main-left">
+    <h1>Graph visualizer</h1>
+    <div class="small-views">
+        <div class="tree-view">
 
-            </div>
-            <div class="bird-view">
-
-            </div>
         </div>
-    </div>
-    <div class="main-right">
-        <div class="search-filter">
-            <div class="file-search">
-                <div>
-                    <label>File:
-                      <input type="text">
-                    </label>
-                </div>
-                <div>
-                    <label>Search:
-                      <input type="text">
-                    </label>
-                </div>
-                <div>
-                    <label>Filter:
-                      <input type="text" class="bigger">
-                    </label>
-                </div>
-                <button class="action">Find</button>
-                <button class="action">Restart</button>
-            </div>
-            <div class="params">
-                <div class="param">
-                    <p class="param-name">Bear</p>
-                    <button class="btn"><i class="fa fa-close"></i></button>
-                </div>
-                <div class="param">
-                    <p class="param-name">predator = wolf</p>
-                    <button class="btn"><i class="fa fa-close"></i></button>
-                </div>
-                <div class="param">
-                    <p class="param-name">habitat = forest</p>
-                    <button class="btn"><i class="fa fa-close"></i></button>
-                </div>
-            </div>
-        </div>
-        <div class="main">
+        <div class="bird-view">
 
         </div>
     </div>
+</div>
+<div class="main-right">
+    <div class="search-filter">
+        <div class="file-search">
+            <div>
+                <label>File:
+                    <input type="text">
+                </label>
+            </div>
+            <div>
+                <label>Search:
+                    <input type="text">
+                </label>
+            </div>
+            <div>
+                <label>Filter:
+                    <input type="text" class="bigger">
+                </label>
+            </div>
+            <button class="action">Find</button>
+            <button class="action">Restart</button>
+        </div>
+        <div class="params">
+            <div class="param">
+                <p class="param-name">Bear</p>
+                <button class="btn"><i class="fa fa-close"></i></button>
+            </div>
+            <div class="param">
+                <p class="param-name">predator = wolf</p>
+                <button class="btn"><i class="fa fa-close"></i></button>
+            </div>
+            <div class="param">
+                <p class="param-name">habitat = forest</p>
+                <button class="btn"><i class="fa fa-close"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        {% block mainView %}
+            {% autoescape off %}{{ template }}{% endautoescape %}
+        {% endblock %}
+    </div>
+</div>
 </body>
 </html>
