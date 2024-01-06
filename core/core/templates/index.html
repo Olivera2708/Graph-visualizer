@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link rel="stylesheet" href="{% static 'toggle.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+    <script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>
     <script>
         function createParam(filterValue){
             const newParam = document.createElement("div");
@@ -45,10 +47,8 @@
         <h1>Graph visualizer</h1>
         <div class="small-views">
             <div class="tree-view">
-
             </div>
             <div class="bird-view">
-
             </div>
         </div>
     </div>
@@ -84,6 +84,9 @@
             </div>
         </div>
         <div class="main">
+            {% block mainView %}
+                {% autoescape off %}{{ template }}{% endautoescape %}
+            {% endblock %}
         </div>
     </div>
 </body>
