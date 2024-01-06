@@ -20,7 +20,7 @@ label {
 }
 
 input {
-    width: 65%;
+    /*width: 65%;*/
     font-size: 1.1rem;
     margin-left: 0.2rem;
     margin-right: 1rem;
@@ -88,7 +88,7 @@ input {
 .file-search {
     margin: 0.8rem 1rem 0 1rem;
     display: grid;
-    grid-template-columns: 12% 13% 25% 34% 8% 8%;
+    grid-template-columns: 12% 13% 28% 40% 8%;
 }
 
 .params {
@@ -117,4 +117,9 @@ input {
 .btn {
     background: transparent;
     border: none;
+}
+
+#filter-div {
+    display: grid;
+    grid-template-columns: 12% 60% 22%;
 }

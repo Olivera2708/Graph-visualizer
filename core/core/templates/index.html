@@ -7,6 +7,38 @@
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link rel="stylesheet" href="{% static 'toggle.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script>
+        function createParam(filterValue){
+            const newParam = document.createElement("div");
+            newParam.className = "param";
+
+            const paramText = document.createElement("p");
+            paramText.className = "param-name";
+            paramText.textContent = filterValue;
+
+            const closeButton = document.createElement("button");
+            closeButton.className = "btn";
+            closeButton.innerHTML = '<i class="fa fa-close"></i>';
+
+            closeButton.addEventListener('click', function() {
+                newParam.remove();
+            });
+
+            newParam.appendChild(paramText);
+            newParam.appendChild(closeButton);
+
+            return newParam;
+        }
+
+        function addFilter() {
+            const filterValue = document.getElementById('filter').value;
+            if (filterValue.trim() !== "") {
+                const newParam = createParam(filterValue.trim())
+                document.querySelector('.params').appendChild(newParam);
+                document.getElementById('filter').value = '';
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="main-left">
@@ -22,45 +54,36 @@
     </div>
     <div class="main-right">
         <div class="search-filter">
+            <form method="post" action="{% url 'view' %}">
             <div class="file-search">
                 <div>
-                    <input class="tgl tgl-skewed" id="cb4" type="checkbox"/>
-                    <label class="tgl-btn" data-tg-off="simple" data-tg-on="block" for="cb4"></label>
+                    {% csrf_token %}
+                    <input class="tgl tgl-skewed" id="visualizer" name="visualizer" type="checkbox"/>
+                    <label class="tgl-btn" data-tg-off="simple" data-tg-on="block" for="visualizer"></label>
                 </div>
                 <div>
-                    <input class="tgl tgl-skewed" id="cb3" type="checkbox"/>
-                    <label class="tgl-btn" data-tg-off="json" data-tg-on="xml" for="cb3"></label>
+                    {% csrf_token %}
+                    <input class="tgl tgl-skewed" id="data-source" name="data_source" type="checkbox"/>
+                    <label class="tgl-btn" data-tg-off="json" data-tg-on="xml" for="data-source"></label>
                 </div>
+                {% csrf_token %}
                 <div>
-                    <label>Search:
-                      <input type="text">
-                    </label>
+                    <label for="search">Search:</label>
+                    <input id="search" name="search" type="text">
                 </div>
-                <div>
-                    <label>Filter:
-                      <input type="text" class="bigger">
-                    </label>
+                <div id="filter-div">
+                    <label for="filter">Filter:</label>
+                    <input id="filter" type="text" class="bigger">
+                    <button type="button" class="action" onclick="addFilter()">Add filter</button>
                 </div>
-                <button class="action">Find</button>
-                <button class="action">Restart</button>
+                {% csrf_token %}
+                <button type="submit" name="button_type" value="find" class="action">Find</button>
             </div>
+            </form>
             <div class="params">
-                <div class="param">
-                    <p class="param-name">Bear</p>
-                    <button class="btn"><i class="fa fa-close"></i></button>
-                </div>
-                <div class="param">
-                    <p class="param-name">predator = wolf</p>
-                    <button class="btn"><i class="fa fa-close"></i></button>
-                </div>
-                <div class="param">
-                    <p class="param-name">habitat = forest</p>
-                    <button class="btn"><i class="fa fa-close"></i></button>
-                </div>
             </div>
         </div>
         <div class="main">
-
         </div>
     </div>
 </body>
