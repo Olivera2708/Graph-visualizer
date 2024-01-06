@@ -1,8 +1,12 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 import traceback
 from django.apps import apps
 import os
+
+from core.core.models import Graph
+
 
 def initial(request):
     return render(request, 'index.html')
@@ -31,19 +35,16 @@ def view(request):
     try:
         graph = start_source_plugins(data_source_plugins, file_name)
         html = run_visualisation_plugins(visualizer_plugins, visualizer_name, graph)
-        nodes, edges = graph.nodes, graph.edges
-        return render(request, "index.html", {"template": html, "nodes": nodes, "edges": edges})
-    except FileNotFoundError:
-        messages.error(request, "File doesn't exist!")
-        return render(request, "index.html")
+        return JsonResponse({"template": html})
     except Exception as e:
         traceback.print_exc()
-        return redirect('home')
+        return JsonResponse({"template": ""})
 
 def run_visualisation_plugins(visualisation_plugins, visualizer_name, graph):
+    global template
+    template = None
     for plugin in visualisation_plugins:
         if plugin.name() == visualizer_name:
-            global template
             template = plugin.load()
     html = template.render(nodes=graph.nodes, edges=graph.edges)
     return html

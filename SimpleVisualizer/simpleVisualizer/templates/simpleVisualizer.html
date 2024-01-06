@@ -51,7 +51,12 @@
     </div>
 
     <script>
-        const map = new Map();
+        if (typeof map !== 'undefined' && map instanceof Map) {
+            map.clear();
+        } else {
+            var map = new Map();
+        }
+
         nodes =
             {
                 {%  for node in nodes %}
