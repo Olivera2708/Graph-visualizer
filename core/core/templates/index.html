@@ -5,6 +5,7 @@
     <title>Graph visualizer</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="{% static 'toggle.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
@@ -23,9 +24,12 @@
         <div class="search-filter">
             <div class="file-search">
                 <div>
-                    <label>File:
-                      <input type="text">
-                    </label>
+                    <input class="tgl tgl-skewed" id="cb4" type="checkbox"/>
+                    <label class="tgl-btn" data-tg-off="simple" data-tg-on="block" for="cb4"></label>
+                </div>
+                <div>
+                    <input class="tgl tgl-skewed" id="cb3" type="checkbox"/>
+                    <label class="tgl-btn" data-tg-off="json" data-tg-on="xml" for="cb3"></label>
                 </div>
                 <div>
                     <label>Search:

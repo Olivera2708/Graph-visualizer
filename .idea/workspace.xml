@@ -6,10 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="ad7227e1-5ede-41dd-ae7e-b825028b81c4" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/core/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/core/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/core/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source/data_source_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/json_data_source/json_data_source/data_source_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/core/static/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/static/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/core/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +47,7 @@
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feature-json-data-source",
+    "git-widget-placeholder": "feature-gui-interaction",
     "last_opened_file_path": "/Users/olivera/Documents/Graph-visualizer/Graph-visualizer",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
@@ -62,6 +60,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/core/core/static" />
       <recent name="$PROJECT_DIR$/core" />
     </key>
   </component>
