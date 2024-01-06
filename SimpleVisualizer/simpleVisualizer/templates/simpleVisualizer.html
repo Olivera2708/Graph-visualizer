@@ -33,8 +33,6 @@
             background-color: #dedded;
             border: 1px solid #969696;
             border-radius: 30px;
-            box-shadow: 10px 5px 20px 3px #969696;
-            pointer-events: none;
         }
     </style>
 {% endblock %}
@@ -100,10 +98,8 @@
         var svg = d3.select('svg')
             .call(d3.behavior.zoom().on("zoom", function () {
                 if (d3.event.sourceEvent && d3.event.sourceEvent.type === "mousedown") {
-                    // Disable zoom during drag
                     return;
                 }
-                console.log("okida se dogadjaj")
                 svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
             }))
             .append("g");
@@ -115,6 +111,10 @@
                 return d.directed === "True" ? 'link-directed' : 'link';
             });
 
+        var div = d3.select('body').append('div')
+            .attr('class', 'detailsDisplay')
+            .style('opacity', 0);
+
         var node = svg.selectAll('.node')
             .data(force.nodes())
             .enter().append('g')
@@ -123,26 +123,72 @@
                 return d.id;
             })
             .on('click', function(d) {
-                d3.event.stopPropagation(); // Prevent the click event from propagating to the svg container
+                d3.event.stopPropagation();
+            })
+            .on('mouseover', function (d) {
+                var textSize = 13;
+                div.attr('width', 300)
+                    .attr('height', 300)
+                    .style('font-family','sans-serif')
+                    .attr('text-anchor','start')
+                    .transition()
+                    .style("opacity",1);
+
+                var info = "";
+                info += `${d.name}`
+                info += "</br></br>"
+                for(var i=0;i<d.attributes.length;i++){
+                    var attributeInfo = `${d.attributes[i].name}:  ${d.attributes[i].value}`;
+                    var textWidth = attributeInfo.length * (textSize / 2);
+                    if (textWidth > 300) {
+                        var wrappedLines = wordwrap(attributeInfo, 50).split('\n');
+                        info += wrappedLines.join("</br>");
+                    } else {
+                        info += attributeInfo;
+                    }
+                    if (i === d.attributes.length-1) {
+                        break;
+                    }
+                    info += "</br>";
+                }
+
+                if (info.length > 0) {
+                    div.html(info)
+                        .style("left", "1rem")
+                        .style("top", "1rem");
+                }
+                else {
+                    div.html("No more data for this node")
+                        .style("left", "1rem")
+                        .style("top", "1rem");
+                }
+            })
+            .on('mouseout', function(d){
+                div.transition().style('opacity', 0);
             })
             .call(force.drag);
+
+        function wordwrap(str, width) {
+            var regex = new RegExp('.{1,' + width + '}(\\s|$)|.{' + width + '}|.+$', 'g');
+            return str.match(regex).join('\n');
+        }
 
         d3.selectAll('.node').each(function (d) {
             showGraph(d);
         });
 
-                var drag = d3.behavior.drag()
+        var drag = d3.behavior.drag()
             .on("dragstart", function (d) {
-                d3.event.sourceEvent.stopPropagation(); // Prevent the dragstart event from propagating to the svg container
-                d.fixed = true; // Fix the node in place during dragging
+                d3.event.sourceEvent.stopPropagation();
+                d.fixed = true;
             })
             .on("drag", function (d) {
                 d.x += d3.event.dx;
                 d.y += d3.event.dy;
-                tick(); // Update the node positions during dragging
+                tick();
             })
             .on("dragend", function (d) {
-                d.fixed = false; // Release the fixed position after dragging
+                d.fixed = false;
             });
 
         node.call(drag);
@@ -173,7 +219,9 @@
                 .attr('height', height)
                 .attr('rx', 10)
                 .attr('ry', 10)
-                .attr('fill', '#fae0c3');
+                .attr('fill', '#fae0c3')
+                .attr('stroke', 'black')
+                .attr('stroke-width', 0.5);
 
             textElement.remove();
 
