@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="ad7227e1-5ede-41dd-ae7e-b825028b81c4" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/core/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/core/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/core/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source/data_source_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/json_data_source/json_data_source/data_source_loader.py" afterDir="false" />
     </list>
@@ -42,24 +40,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "Python.models.executor": "Run",
-    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feature-json-data-source",
-    "last_opened_file_path": "/Users/olivera/Documents/Graph-visualizer/Graph-visualizer",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Python.models.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature-json-data-source&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/olivera/Documents/Graph-visualizer/Graph-visualizer&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/core" />
