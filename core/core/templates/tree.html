@@ -56,16 +56,28 @@
         display: block;
     }
 
-    .tree li::before {
+    .plus::before {
         content: '+';
-        margin: 0.2rem 0 auto 0.5rem;
+        margin: 0;
+        left: 0.6rem;
         position: absolute;
         visibility: visible;
     }
 
-    .tree li.open::before {
-        content: '-';
+    .plus.open::before {
+        content: "-";
     }
+
+    /*.tree li::before {*/
+    /*    content: '+';*/
+    /*    margin: 0.2rem 0 auto 0.5rem;*/
+    /*    position: absolute;*/
+    /*    visibility: visible;*/
+    /*}*/
+
+    /*.tree li.open::before {*/
+    /*    content: '-';*/
+    /*}*/
 
     .tree li.has-children::before {
         visibility: visible;
@@ -130,6 +142,7 @@
                 const textSpan = document.createElement('span');
                 textSpan.classList.add('pointer');
                 textSpan.textContent = node.label;
+                textSpan.classList.add("plus");
                 listItem.appendChild(textSpan);
 
                 const attributesDiv = document.createElement('div');
@@ -155,20 +168,34 @@
 
                 const relationSpan = document.createElement('span');
                 relationSpan.classList.add("pointer")
-                relationSpan.textContent = "{{ relation }}";
+                relationSpan.classList.add("plus");
+                relationSpan.textContent = "{{ relation }}s";
+
+                const relationDiv = document.createElement('div');
+                relationDiv.style.display = 'none';
+                relationDiv.classList.add('attributes');
 
                 if (node.children && node.children.length > 0){
                     relationList.appendChild(relationSpan)
-                    const sublist = document.createElement('ul');
-                    buildTree(sublist, node.children);
-                    // relationSpan.appendChild(sublist);
+                    const relationElementsList = document.createElement('li');
+                    relationElementsList.classList.add('relation');
+
+                    for (let [key, value] of Object.entries(node.children)) {
+                        const attributeSpan = document.createElement('span');
+                        attributeSpan.classList.add("pointer")
+                        attributeSpan.classList.add("plus");
+                        attributeSpan.textContent = value.label;
+                        relationElementsList.appendChild(attributeSpan);
+                    }
+
+                    relationDiv.appendChild(relationElementsList);
+                    relationList.appendChild(relationDiv);
                     attributesDiv.appendChild(relationList);
                 }
 
                 relationSpan.addEventListener('click', function () {
-                    console.log("predatori")
-                    // relationSpan.style.display = relationSpan.style.display === 'none' ? 'block' : 'none';
-                    // listItem.classList.toggle('open');
+                    relationDiv.style.display = relationDiv.style.display === 'none' ? 'block' : 'none';
+                    relationDiv.classList.toggle('open');
                 });
                 listItem.appendChild(attributesDiv);
 
