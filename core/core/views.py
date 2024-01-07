@@ -58,7 +58,7 @@ def start_source_plugins(source_plugins, file_name):
 
 def load_tree(graph):
     template = get_template("tree.html")
-    return template.render(nodes=graph.nodes, edges=graph.edges)
+    return template.render(nodes=graph.nodes, edges=graph.edges, relation=graph.edges[0].type)
 
 def get_template(view):
     p = os.path.dirname(__file__)

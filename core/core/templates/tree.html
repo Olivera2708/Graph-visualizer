@@ -2,8 +2,15 @@
 <style>
     #treeview {
         width: 100%;
+        max-width: 23vw;
         height: 48vh;
         overflow: auto;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    #treeview::-webkit-scrollbar {
+        display: none;
     }
 
     .tree {
@@ -26,10 +33,20 @@
 
     .tree li span {
         background: #fae0c3;
+        margin: 0 2rem 0.2rem 0;
         border: 1px solid black;
         border-radius: 0.5rem;
         padding: 0.2rem 1rem 0.2rem 1.5rem;
-        display: inline-block;
+        display: block;
+    }
+
+    .tree li span.tree-attribute {
+        margin: 0 2rem 0.2rem 0;
+        background: #fff0e0;
+        border: 1px solid black;
+        border-radius: 0.5rem;
+        padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+        display: block;
     }
 
     .tree li::before {
@@ -54,6 +71,15 @@
     .tree li.no-children::before {
         visibility: hidden;
     }
+
+    .tree .attributes {
+        margin-left: 1.5rem;
+        padding-top: 0.2rem;
+    }
+
+    .tree li.open .attributes {
+        display: block;
+    }
 </style>
 {% endblock %}
 
@@ -62,26 +88,31 @@
     <script>
         let treeData = [];
 
-        function createNodes(selected, nodes, edges){
+        function createNodes(selected){
             treeData = []
-            console.log(selected)
-            for (let [key, value] of Object.entries(nodes)) {
-                if (value.id === selected) {
-                    const node = {label: value.name};
-                    node.children = getChildren(value.id);
-                    treeData.push(node);
+            {% for node in nodes %}
+                if ("node_" + {{ node.id }} === selected) {
+                    console.log({{ node.id }})
+                    const new_node = {label: "{{ node.name }}"};
+                    let attributes = []
+                    {% for attr in node.attributes %}
+                        attributes.push({ "{{ attr.name }}": "{{ attr.value }}" });
+                    {% endfor %}
+                    new_node.attributes = attributes;
+                    new_node.children = getChildren({{ node.id }});
+                    treeData.push(new_node);
                 }
-            }
+            {% endfor %}
             buildTree(document.getElementById('treeview'), treeData);
         }
 
         function getChildren(node_id) {
             let ret = []
-            for (let [key, value] of Object.entries(edges)) {
-                if (value.target.id === node_id) {
-                    ret.push({label: value.source.name})
+            {% for edge in edges %}
+                if ({{ edge.toNode.id }} == node_id){
+                    ret.push({label: "{{ edge.fromNode.name }}" });
                 }
-            }
+            {% endfor %}
             return ret;
         }
 
@@ -93,25 +124,43 @@
                 textSpan.textContent = node.label;
                 listItem.appendChild(textSpan);
 
-                if (node.children && node.children.length > 0) {
+                const attributesDiv = document.createElement('div');
+                attributesDiv.style.display = 'none';
+
+                if (node.attributes !== undefined) {
+                    attributesDiv.classList.add('attributes');
+                    for (let [key, value] of Object.entries(node.attributes)) {
+                        if (Object.keys(value)[0] !== "id" && Object.keys(value)[0] !== "name" && Object.keys(value)[0] !== "attributes") {
+                            const attributeSpan = document.createElement('span');
+                            attributeSpan.classList.add('tree-attribute');
+                            attributeSpan.textContent = `${Object.keys(value)[0]}: ${Object.values(value)[0]}`;
+                            attributesDiv.appendChild(attributeSpan);
+                        }
+                    }
+                }
+
+                if (node.children && node.children.length > 0 && node.attributes && node.attributes.length > 0)
                     listItem.classList.add('has-children');
 
+                const relationSpan = document.createElement('span');
+                relationSpan.textContent = "{{ relation }}";
+
+                if (node.children && node.children.length > 0){
                     const sublist = document.createElement('ul');
-                    sublist.style.display = 'none';
                     buildTree(sublist, node.children);
-                    listItem.appendChild(sublist);
+                    relationSpan.appendChild(sublist);
+                    attributesDiv.appendChild(relationSpan);
                 }
 
-                if (!node.children || node.children.length === 0) {
-                    listItem.classList.add('no-children');
-                }
+                // relationSpan.addEventListener('click', function () {
+                //     relationSpan.style.display = relationSpan.style.display === 'none' ? 'block' : 'none';
+                //     listItem.classList.toggle('open');
+                // });
+                listItem.appendChild(attributesDiv);
 
                 listItem.addEventListener('click', function () {
-                    const sublist = listItem.querySelector('ul');
-                    if (sublist) {
-                        sublist.style.display = sublist.style.display === 'none' ? 'block' : 'none';
-                        listItem.classList.toggle('open');
-                    }
+                    attributesDiv.style.display = attributesDiv.style.display === 'none' ? 'block' : 'none';
+                    listItem.classList.toggle('open');
                 });
 
                 parentElement.appendChild(listItem);
