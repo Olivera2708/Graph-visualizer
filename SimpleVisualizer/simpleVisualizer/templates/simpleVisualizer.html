@@ -33,8 +33,7 @@
             background-color: #dedded;
             border: 1px solid #969696;
             border-radius: 30px;
-            box-shadow: 10px 5px 20px 3px #969696;
-            pointer-events: none;
+            z-index: 3;
         }
     </style>
 {% endblock %}
@@ -49,7 +48,6 @@
             </defs>
         </svg>
     </div>
-
     <script>
         if (typeof map !== 'undefined' && map instanceof Map) {
             map.clear();
@@ -103,7 +101,14 @@
             .charge(-100)
             .start();
 
-        var svg = d3.select('svg');
+        var svg = d3.select('svg')
+            .call(d3.behavior.zoom().on("zoom", function () {
+                if (d3.event.sourceEvent && d3.event.sourceEvent.type === "mousedown") {
+                    return;
+                }
+                svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
+            }))
+            .append("g");
 
         var link = svg.selectAll('.link')
             .data(edges)
@@ -112,17 +117,90 @@
                 return d.directed === "True" ? 'link-directed' : 'link';
             });
 
+        var div = d3.select('body').append('div')
+            .attr('class', 'detailsDisplay')
+            .style('display', 'none')
+            .style('visibility', 'hidden');
+
         var node = svg.selectAll('.node')
             .data(force.nodes())
             .enter().append('g')
             .attr('class', 'node')
             .attr('id', function (d) {
                 return d.id;
-            });
+            })
+            .on('click', function(d) {
+                d3.event.stopPropagation();
+            })
+            .on('mouseover', function (d) {
+                var textSize = 13;
+                div.attr('width', 300)
+                    .attr('height', 300)
+                    .style('font-family','sans-serif')
+                    .attr('text-anchor','start')
+                    .transition()
+                    .style("visibility", "visible")
+                    .style('display', 'block');
+
+                var info = "";
+                info += `${d.name}`
+                info += "</br></br>"
+                for(var i=0;i<d.attributes.length;i++){
+                    var attributeInfo = `${d.attributes[i].name}:  ${d.attributes[i].value}`;
+                    var textWidth = attributeInfo.length * (textSize / 2);
+                    if (textWidth > 300) {
+                        var wrappedLines = wordwrap(attributeInfo, 50).split('\n');
+                        info += wrappedLines.join("</br>");
+                    } else {
+                        info += attributeInfo;
+                    }
+                    if (i === d.attributes.length-1) {
+                        break;
+                    }
+                    info += "</br>";
+                }
+
+                if (info.length > 0) {
+                    div.html(info)
+                        .style("left", d3.event.pageX + "px")
+                        .style("top", d3.event.pageY + "px");
+                }
+                else {
+                    div.html("No more data for this node")
+                        .style("left", d3.event.pageX + "px")
+                        .style("top", d3.event.pageY + "px");
+                }
+            })
+            .on('mouseout', function(d){
+                div.transition().style('visibility', 'hidden')
+                    .style('display', 'none');
+            })
+            .call(force.drag);
+
+        function wordwrap(str, width) {
+            var regex = new RegExp('.{1,' + width + '}(\\s|$)|.{' + width + '}|.+$', 'g');
+            return str.match(regex).join('\n');
+        }
 
         d3.selectAll('.node').each(function (d) {
             showGraph(d);
         });
+
+        var drag = d3.behavior.drag()
+            .on("dragstart", function (d) {
+                d3.event.sourceEvent.stopPropagation();
+                d.fixed = true;
+            })
+            .on("drag", function (d) {
+                d.x += d3.event.dx;
+                d.y += d3.event.dy;
+                tick();
+            })
+            .on("dragend", function (d) {
+                d.fixed = false;
+            });
+
+        node.call(drag);
 
         function showGraph(d) {
             var textSize = 20;
@@ -150,7 +228,9 @@
                 .attr('height', height)
                 .attr('rx', 10)
                 .attr('ry', 10)
-                .attr('fill', '#fae0c3');
+                .attr('fill', '#fae0c3')
+                .attr('stroke', 'black')
+                .attr('stroke-width', 0.5);
 
             textElement.remove();
 
@@ -170,7 +250,7 @@
             var height = 30;
             node.attr("transform", function (d) {
                 return "translate(" + d.x + "," + d.y + ")";
-            }).call(force.drag);
+            });
 
             link.attr('x1', function (d) {
                 width = map.get(d.source.id);
