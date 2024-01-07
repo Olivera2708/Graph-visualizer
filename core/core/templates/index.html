@@ -1,66 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Graph visualizer</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
-    <script src="https://d3js.org/d3-selection-multi.v1.min.js"></script></head>
-<body>
-<div class="main-left">
-    <h1>Graph visualizer</h1>
-    <div class="small-views">
-        <div class="tree-view">
+    <head>
+        <meta charset="UTF-8">
+        <title>Graph visualizer</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
+        <link rel="stylesheet" href="{% static 'toggle.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+        <script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    </head>
+    <body>
+        <div class="main-left">
+            <h1>Graph visualizer</h1>
+            <div class="small-views">
+                <div class="tree-view">
+                </div>
+                <div class="bird-view">
+                </div>
+            </div>
+        </div>
+        <div class="main-right">
+            <div class="search-filter">
+                <form id="myForm" method="post" action="{% url 'view' %}">
+                    {% csrf_token %}
+                    <div class="file-search">
+                        <div>
+                            <input class="tgl tgl-skewed" id="visualizer" name="visualizer" type="checkbox"/>
+                            <label class="tgl-btn" data-tg-off="simple" data-tg-on="block" for="visualizer"></label>
+                        </div>
+                        <div>
+                            <input class="tgl tgl-skewed" id="data-source" name="data_source" type="checkbox"/>
+                            <label class="tgl-btn" data-tg-off="json" data-tg-on="xml" for="data-source"></label>
+                        </div>
+                        <div>
+                            <label for="search">Search:</label>
+                            <input id="search" name="search" type="text">
+                        </div>
+                        <div id="filter-div">
+                            <label for="filter">Filter:</label>
+                            <input id="filter" type="text" class="bigger">
+                            <button type="button" class="action" onclick="addFilter()">Add filter</button>
+                        </div>
+                        <button type="button" class="action" id="findButton">Find</button>
+<!--                        <button type="submit" class="action">Find</button>-->
+                    </div>
+                </form>
+                <div class="params">
+                </div>
+            </div>
+            <div class="main">
+                {% block mainView %}
+                {% autoescape off %}{{ template }}{% endautoescape %}
+                {% endblock %}
+            </div>
+        </div>
+    </body>
+    <script>
+        function createParam(filterValue) {
+            const newParam = document.createElement("div");
+            newParam.className = "param";
 
-        </div>
-        <div class="bird-view">
+            const paramText = document.createElement("p");
+            paramText.className = "param-name";
+            paramText.textContent = filterValue;
 
-        </div>
-    </div>
-</div>
-<div class="main-right">
-    <div class="search-filter">
-        <div class="file-search">
-            <div>
-                <label>File:
-                    <input type="text">
-                </label>
-            </div>
-            <div>
-                <label>Search:
-                    <input type="text">
-                </label>
-            </div>
-            <div>
-                <label>Filter:
-                    <input type="text" class="bigger">
-                </label>
-            </div>
-            <button class="action">Find</button>
-            <button class="action">Restart</button>
-        </div>
-        <div class="params">
-            <div class="param">
-                <p class="param-name">Bear</p>
-                <button class="btn"><i class="fa fa-close"></i></button>
-            </div>
-            <div class="param">
-                <p class="param-name">predator = wolf</p>
-                <button class="btn"><i class="fa fa-close"></i></button>
-            </div>
-            <div class="param">
-                <p class="param-name">habitat = forest</p>
-                <button class="btn"><i class="fa fa-close"></i></button>
-            </div>
-        </div>
-    </div>
-    <div class="main">
-        {% block mainView %}
-            {% autoescape off %}{{ template }}{% endautoescape %}
-        {% endblock %}
-    </div>
-</div>
-</body>
+            const closeButton = document.createElement("button");
+            closeButton.className = "btn";
+            closeButton.innerHTML = '<i class="fa fa-close"></i>';
+
+            closeButton.addEventListener('click', function () {
+                newParam.remove();
+            });
+
+            newParam.appendChild(paramText);
+            newParam.appendChild(closeButton);
+
+            return newParam;
+        }
+
+        function addFilter() {
+            const filterValue = document.getElementById('filter').value.trim();
+            if (filterValue !== "") {
+                const newParam = createParam(filterValue);
+                document.querySelector('.params').appendChild(newParam);
+                document.getElementById('filter').value = '';
+            }
+        }
+
+        function submitForm() {
+            var formData = $('#myForm').serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url "view" %}',
+                data: formData,
+                success: function (response) {
+                    $('.main').html(response.template);
+                },
+                error: function () {
+                    console.error('AJAX request failed');
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            $('#findButton').on('click', function() {
+                submitForm();
+            });
+        });
+    </script>
 </html>
