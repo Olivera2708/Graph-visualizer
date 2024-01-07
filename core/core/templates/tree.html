@@ -21,8 +21,15 @@
     .tree li {
         margin: 0 0 0.5rem 1rem;
         position: relative;
-        cursor: pointer;
         list-style-type: none;
+    }
+
+    .pointer {
+        cursor: pointer;
+    }
+
+    li.relation {
+        margin: 0;
     }
 
     .tree li ul {
@@ -121,6 +128,7 @@
             nodes.forEach(node => {
                 const listItem = document.createElement('li');
                 const textSpan = document.createElement('span');
+                textSpan.classList.add('pointer');
                 textSpan.textContent = node.label;
                 listItem.appendChild(textSpan);
 
@@ -142,23 +150,29 @@
                 if (node.children && node.children.length > 0 && node.attributes && node.attributes.length > 0)
                     listItem.classList.add('has-children');
 
+                const relationList = document.createElement('li');
+                relationList.classList.add('relation');
+
                 const relationSpan = document.createElement('span');
+                relationSpan.classList.add("pointer")
                 relationSpan.textContent = "{{ relation }}";
 
                 if (node.children && node.children.length > 0){
+                    relationList.appendChild(relationSpan)
                     const sublist = document.createElement('ul');
                     buildTree(sublist, node.children);
-                    relationSpan.appendChild(sublist);
-                    attributesDiv.appendChild(relationSpan);
+                    // relationSpan.appendChild(sublist);
+                    attributesDiv.appendChild(relationList);
                 }
 
-                // relationSpan.addEventListener('click', function () {
-                //     relationSpan.style.display = relationSpan.style.display === 'none' ? 'block' : 'none';
-                //     listItem.classList.toggle('open');
-                // });
+                relationSpan.addEventListener('click', function () {
+                    console.log("predatori")
+                    // relationSpan.style.display = relationSpan.style.display === 'none' ? 'block' : 'none';
+                    // listItem.classList.toggle('open');
+                });
                 listItem.appendChild(attributesDiv);
 
-                listItem.addEventListener('click', function () {
+                textSpan.addEventListener('click', function () {
                     attributesDiv.style.display = attributesDiv.style.display === 'none' ? 'block' : 'none';
                     listItem.classList.toggle('open');
                 });
