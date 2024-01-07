@@ -20,7 +20,6 @@ label {
 }
 
 input {
-    width: 65%;
     font-size: 1.1rem;
     margin-left: 0.2rem;
     margin-right: 1rem;
@@ -51,8 +50,6 @@ input {
 .main-right{
     height: 100%;
     width: 100%;
-    display: grid;
-    grid-template-rows: 12% 88%;
 }
 
 .small-views{
@@ -80,15 +77,17 @@ input {
 }
 
 .search-filter{
+    position: relative;
+    z-index: 2;
     height: fit-content;
     background: #FAF6F0;
     border-bottom: black solid 1px;
 }
 
 .file-search {
-    margin: 0.8rem 1rem 0 1rem;
+    padding: 0.8rem 1rem 0 1rem;
     display: grid;
-    grid-template-columns: 25% 25% 34% 8% 8%;
+    grid-template-columns: 12% 13% 28% 40% 8%;
 }
 
 .params {
@@ -117,4 +116,16 @@ input {
 .btn {
     background: transparent;
     border: none;
+}
+
+#filter-div {
+    display: grid;
+    grid-template-columns: 12% 60% 22%;
+}
+
+.main {
+    width: 75%;
+    position: absolute;
+    top: 0;
+    z-index: 1;
 }

@@ -2,7 +2,7 @@
     <style>
         svg {
             width: 100%;
-            height: 85vh;
+            height: 99vh;
         }
 
         .node {
@@ -51,7 +51,12 @@
     </div>
 
     <script>
-        const map = new Map();
+        if (typeof map !== 'undefined' && map instanceof Map) {
+            map.clear();
+        } else {
+            var map = new Map();
+        }
+
         nodes =
             {
                 {%  for node in nodes %}
