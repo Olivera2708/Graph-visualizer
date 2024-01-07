@@ -129,8 +129,16 @@
             .attr('id', function (d) {
                 return d.id;
             })
-            .on('click', function(d) {
+            .on('click', function (d) {
+                svg.selectAll('.node rect')
+                    .attr('fill', '#fae0c3');
+
+                d3.select(this).select('rect')
+                    .attr('fill', '#fdc897');
+
                 d3.event.stopPropagation();
+
+                createNodes(d.id, nodes, edges);
             })
             .on('mouseover', function (d) {
                 var textSize = 13;

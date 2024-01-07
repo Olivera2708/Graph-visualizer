@@ -5,18 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bb83a6bf-643c-431d-91f5-9055a64273b9" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/SimpleVisualizer.egg-info/PKG-INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/SimpleVisualizer.egg-info/SOURCES.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/SimpleVisualizer.egg-info/dependency_links.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/SimpleVisualizer.egg-info/entry_points.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/SimpleVisualizer.egg-info/not-zip-safe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/SimpleVisualizer.egg-info/top_level.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source.egg-info/PKG-INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source.egg-info/SOURCES.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source.egg-info/dependency_links.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source.egg-info/entry_points.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source.egg-info/not-zip-safe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source.egg-info/top_level.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/simpleVisualizer/templates/simpleVisualizer.html" beforeDir="false" afterPath="$PROJECT_DIR$/SimpleVisualizer/simpleVisualizer/templates/simpleVisualizer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/core/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/core/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +46,7 @@
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feature-gui-interaction",
+    "git-widget-placeholder": "feature-tree-view",
     "last_opened_file_path": "/Users/olivera/Documents/Graph-visualizer/Graph-visualizer",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",

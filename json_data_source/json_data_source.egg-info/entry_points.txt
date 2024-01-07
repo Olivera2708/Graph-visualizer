@@ -1,0 +1,3 @@
+[data_source]
+json_data_source = json_data_source.data_source_loader:JsonDataSourceLoader
+

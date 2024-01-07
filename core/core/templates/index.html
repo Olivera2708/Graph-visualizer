@@ -51,9 +51,9 @@
                 </div>
             </div>
             <div class="main">
-                {% block mainView %}
-                {% autoescape off %}{{ template }}{% endautoescape %}
-                {% endblock %}
+<!--                {% block mainView %}-->
+<!--                {% autoescape off %}{{ response.template }}{% endautoescape %}-->
+<!--                {% endblock %}-->
             </div>
         </div>
     </body>
@@ -98,6 +98,7 @@
                 data: formData,
                 success: function (response) {
                     $('.main').html(response.template);
+                    $('.tree-view').html(response.tree);
                 },
                 error: function () {
                     console.error('AJAX request failed');

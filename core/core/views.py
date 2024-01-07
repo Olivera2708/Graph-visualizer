@@ -1,11 +1,9 @@
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
-from django.contrib import messages
+from django.shortcuts import render
+from jinja2 import FileSystemLoader, Environment
 import traceback
 from django.apps import apps
 import os
-
-from core.core.models import Graph
 
 
 def initial(request):
@@ -35,10 +33,12 @@ def view(request):
     try:
         graph = start_source_plugins(data_source_plugins, file_name)
         html = run_visualisation_plugins(visualizer_plugins, visualizer_name, graph)
-        return JsonResponse({"template": html})
+        tree_html = load_tree(graph)
+        return JsonResponse({"template": html, "tree": tree_html})
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({"template": ""})
+
 
 def run_visualisation_plugins(visualisation_plugins, visualizer_name, graph):
     global template
@@ -49,10 +49,23 @@ def run_visualisation_plugins(visualisation_plugins, visualizer_name, graph):
     html = template.render(nodes=graph.nodes, edges=graph.edges)
     return html
 
+
 def start_source_plugins(source_plugins, file_name):
     for plugin in source_plugins:
         if plugin.name() == file_name.split(".")[1]:
             return plugin.load_data(get_path(file_name))
+
+
+def load_tree(graph):
+    template = get_template("tree.html")
+    return template.render(nodes=graph.nodes, edges=graph.edges)
+
+def get_template(view):
+    p = os.path.dirname(__file__)
+    path = os.path.join(p, "templates")
+    env = Environment(loader=FileSystemLoader(searchpath=path))
+    template = env.get_template(view)
+    return template
 
 
 def get_path(file_name):
