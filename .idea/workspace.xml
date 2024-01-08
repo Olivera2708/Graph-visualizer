@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bb83a6bf-643c-431d-91f5-9055a64273b9" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/simpleVisualizer/templates/simpleVisualizer.html" beforeDir="false" afterPath="$PROJECT_DIR$/SimpleVisualizer/simpleVisualizer/templates/simpleVisualizer.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/core/templates/tree.html" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/templates/tree.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

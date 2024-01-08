@@ -1,16 +1,9 @@
 {% block style %}
 <style>
     #treeview {
-        width: 100%;
-        max-width: 23vw;
+        width: 23vw;
         height: 48vh;
         overflow: auto;
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-
-    #treeview::-webkit-scrollbar {
-        display: none;
     }
 
     .tree {
@@ -45,6 +38,7 @@
         border-radius: 0.5rem;
         padding: 0.2rem 1rem 0.2rem 1.5rem;
         display: block;
+        width: 17vw;
     }
 
     .tree li span.tree-attribute {
@@ -67,17 +61,6 @@
     .plus.open::before {
         content: "-";
     }
-
-    /*.tree li::before {*/
-    /*    content: '+';*/
-    /*    margin: 0.2rem 0 auto 0.5rem;*/
-    /*    position: absolute;*/
-    /*    visibility: visible;*/
-    /*}*/
-
-    /*.tree li.open::before {*/
-    /*    content: '-';*/
-    /*}*/
 
     .tree li.has-children::before {
         visibility: visible;
@@ -107,11 +90,15 @@
     <script>
         let treeData = [];
 
-        function createNodes(selected){
+        function createGraph(selected){
+            let parentElement = document.getElementById('treeview');
+            createNodes(selected, parentElement, true);
+        }
+
+        function createNodes(selected, parentElement, root = false){
             treeData = []
             {% for node in nodes %}
-                if ("node_" + {{ node.id }} === selected) {
-                    console.log({{ node.id }})
+                if ("{{ node.name }}" === selected) {
                     const new_node = {label: "{{ node.name }}"};
                     let attributes = []
                     {% for attr in node.attributes %}
@@ -122,7 +109,7 @@
                     treeData.push(new_node);
                 }
             {% endfor %}
-            buildTree(document.getElementById('treeview'), treeData);
+            buildTree(parentElement, treeData, root);
         }
 
         function getChildren(node_id) {
@@ -135,21 +122,42 @@
             return ret;
         }
 
-        function buildTree(parentElement, nodes) {
-            parentElement.innerHTML = '';
+        function buildTree(parentElement, nodes, root=false) {
+            parentElement.innerHTML = ''
             nodes.forEach(node => {
-                const listItem = document.createElement('li');
-                const textSpan = document.createElement('span');
-                textSpan.classList.add('pointer');
-                textSpan.textContent = node.label;
-                textSpan.classList.add("plus");
-                listItem.appendChild(textSpan);
+                if (root) {
+                    const listItem = document.createElement('li');
+                    const textSpan = document.createElement('span');
 
-                const attributesDiv = document.createElement('div');
-                attributesDiv.style.display = 'none';
+                    textSpan.classList.add('pointer');
+                    textSpan.textContent = node.label;
+                    textSpan.classList.add("plus");
+                    listItem.appendChild(textSpan);
 
-                if (node.attributes !== undefined) {
+                    const attributesDiv = document.createElement('div');
+                    attributesDiv.style.display = 'none';
                     attributesDiv.classList.add('attributes');
+                    createList(node, attributesDiv);
+
+                    listItem.appendChild(attributesDiv);
+
+                    if (node.children && node.children.length > 0 && node.attributes && node.attributes.length > 0)
+                        listItem.classList.add('has-children');
+
+                    textSpan.addEventListener('click', function () {
+                        attributesDiv.style.display = attributesDiv.style.display === 'none' ? 'block' : 'none';
+                        textSpan.classList.toggle('open');
+                    });
+
+                    parentElement.appendChild(listItem);
+                }
+                else{
+                    createList(node, parentElement)
+                }
+            });
+
+            function createList(node, attributesDiv){
+                if (node.attributes !== undefined) {
                     for (let [key, value] of Object.entries(node.attributes)) {
                         if (Object.keys(value)[0] !== "id" && Object.keys(value)[0] !== "name" && Object.keys(value)[0] !== "attributes") {
                             const attributeSpan = document.createElement('span');
@@ -159,9 +167,6 @@
                         }
                     }
                 }
-
-                if (node.children && node.children.length > 0 && node.attributes && node.attributes.length > 0)
-                    listItem.classList.add('has-children');
 
                 const relationList = document.createElement('li');
                 relationList.classList.add('relation');
@@ -181,11 +186,33 @@
                     relationElementsList.classList.add('relation');
 
                     for (let [key, value] of Object.entries(node.children)) {
-                        const attributeSpan = document.createElement('span');
-                        attributeSpan.classList.add("pointer")
-                        attributeSpan.classList.add("plus");
-                        attributeSpan.textContent = value.label;
-                        relationElementsList.appendChild(attributeSpan);
+                        const attributeRelationSpan = document.createElement('span');
+                        attributeRelationSpan.classList.add("pointer")
+                        attributeRelationSpan.classList.add("plus");
+                        attributeRelationSpan.textContent = value.label;
+
+                        const attributesDiv1 = document.createElement('div');
+                        attributesDiv1.classList.add('attributes');
+                        attributesDiv1.style.display = 'none';
+
+                        attributeRelationSpan.addEventListener('click', function () {
+                            createNodes(value.label, attributesDiv1);
+
+                            if (attributesDiv1.style.display === 'block') {
+                                attributesDiv1.style.display = 'none';
+                                attributeRelationSpan.classList.toggle('open');
+                            }
+                            else {
+                                if (attributeRelationSpan.nextSibling)
+                                    relationElementsList.insertBefore(attributesDiv1, attributeRelationSpan.nextSibling);
+                                else
+                                    relationElementsList.appendChild(attributesDiv1);
+
+                                attributesDiv1.style.display = 'block';
+                                attributeRelationSpan.classList.toggle('open');
+                            }
+                        });
+                        relationElementsList.appendChild(attributeRelationSpan);
                     }
 
                     relationDiv.appendChild(relationElementsList);
@@ -195,17 +222,10 @@
 
                 relationSpan.addEventListener('click', function () {
                     relationDiv.style.display = relationDiv.style.display === 'none' ? 'block' : 'none';
-                    relationDiv.classList.toggle('open');
+                    relationSpan.classList.toggle('open');
                 });
-                listItem.appendChild(attributesDiv);
-
-                textSpan.addEventListener('click', function () {
-                    attributesDiv.style.display = attributesDiv.style.display === 'none' ? 'block' : 'none';
-                    listItem.classList.toggle('open');
-                });
-
-                parentElement.appendChild(listItem);
-            });
+                // return attributesDiv;
+            }
         }
     </script>
 {% endblock %}
