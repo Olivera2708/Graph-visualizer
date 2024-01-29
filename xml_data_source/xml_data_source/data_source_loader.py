@@ -47,7 +47,7 @@ class XMLDataSourceLoader(DataSourceService):
         n = len(graph.nodes)
         for i in range(n-1):
             from_node = graph.nodes[i]
-            for j in range(i, n):
+            for j in range(i+1, n):
                 to_node = graph.nodes[j]
                 if self._have_same_likes(from_node, to_node):
                     self._make_edge(graph, from_node, to_node)
@@ -64,5 +64,5 @@ class XMLDataSourceLoader(DataSourceService):
 
 
     def _make_edge(self, graph: Graph, from_node: Node, to_node: Node):
-        edge = Edge(False, from_node, to_node, "mutual interests")
+        edge = Edge(False, from_node, to_node, "mutual interest")
         graph.add_edge(edge)
