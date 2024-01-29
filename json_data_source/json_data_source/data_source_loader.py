@@ -6,7 +6,7 @@ import json
 class JsonDataSourceLoader(DataSourceService):
 
     def id(self):
-        pass
+        return 'animals json'
 
     def name(self):
         return "json"

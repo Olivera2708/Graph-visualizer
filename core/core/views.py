@@ -1,12 +1,16 @@
+import os
+import traceback
+
+from django.apps import apps
 from django.http import JsonResponse
 from django.shortcuts import render
 from jinja2 import FileSystemLoader, Environment
-import traceback
-from django.apps import apps
-import os
 
 
 def initial(request):
+    config = apps.get_app_config('core')
+    config.load_plugins()
+
     return render(request, 'index.html')
 
 
@@ -26,14 +30,18 @@ def view(request):
         visualizer_name = "BlockVisualizer"
 
     config = apps.get_app_config('core')
-    config.load_plugins()
     data_source_plugins = config.data_source_plugins
     visualizer_plugins = config.visualizer_plugins
 
     try:
-        graph = start_source_plugins(data_source_plugins, file_name)
+        graph, data_source_id = start_source_plugins(data_source_plugins, file_name)
         html = run_visualisation_plugins(visualizer_plugins, visualizer_name, graph)
         tree_html = load_tree(graph)
+
+        #todo send search and filter params
+        config.update_workspace(data_source_id)
+        print(config.selected_workspace)
+
         return JsonResponse({"template": html, "tree": tree_html})
     except Exception as e:
         traceback.print_exc()
@@ -53,7 +61,7 @@ def run_visualisation_plugins(visualisation_plugins, visualizer_name, graph):
 def start_source_plugins(source_plugins, file_name):
     for plugin in source_plugins:
         if plugin.name() == file_name.split(".")[1]:
-            return plugin.load_data(get_path(file_name))
+            return plugin.load_data(get_path(file_name)), plugin.id()
 
 
 def load_tree(graph):

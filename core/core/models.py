@@ -49,14 +49,14 @@ class Edge:
 
 
 class Graph:
-    id = 0
+    # id = 0
 
     def __init__(self):
         super().__init__()
         self.nodes = []
         self.edges = []
-        self.id = Graph.id
-        Graph.id += 1
+        # self.id = Graph.id
+        # Graph.id += 1
 
     def add_node(self, node: Node):
         self.nodes.append(node)
@@ -71,3 +71,29 @@ class Graph:
         for edge in self.edges:
             string += edge.__str__() + "\n"
         return string
+
+
+class Workspace:
+    id = 1
+
+    def __init__(self, data_source_id: str,
+                 search_param = "", filter_params=None):
+
+        self.id = Workspace.id
+        Workspace.id += 1
+
+        self.data_source_id = data_source_id
+        self.search_param = search_param
+        self.filter_params = filter_params
+        self.name = data_source_id + ' #' + str(self.id)
+
+    def update(self, data_source_id: str,
+             search_param = "", filter_params=None):
+        self.data_source_id = data_source_id
+        self.search_param = search_param
+        self.filter_params = filter_params
+        self.name = data_source_id + ' #' + str(self.id)
+
+    def __str__(self):
+        return self.name
+
