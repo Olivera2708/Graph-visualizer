@@ -1,9 +1,0 @@
-setup.py
-json_data_source/__init__.py
-json_data_source/data_source_loader.py
-json_data_source.egg-info/PKG-INFO
-json_data_source.egg-info/SOURCES.txt
-json_data_source.egg-info/dependency_links.txt
-json_data_source.egg-info/entry_points.txt
-json_data_source.egg-info/not-zip-safe
-json_data_source.egg-info/top_level.txt
