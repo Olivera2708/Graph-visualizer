@@ -50,9 +50,10 @@ def select_workspace(request):
 def view(request):
     search = request.POST.get('search')
     visualizer = request.POST.get("visualizer")
-    filter_params = json.loads(request.POST.get('filter_params'))
-    print(filter_params)
-    print(type(filter_params))
+    filter_params_request = request.POST.get('filter_params')
+    filter_params = None
+    if filter_params_request:
+        filter_params = json.loads(request.POST.get('filter_params'))
 
     if visualizer is None:
         visualizer_name = "SimpleVisualizer"

@@ -15,14 +15,6 @@
     <body>
 
         <div class="tab-bar">
-            <form id="workspace_form" method="post" action="{% url 'new-workspace' %}">
-                {% csrf_token %}
-                <div>
-                    <input class="tgl tgl-skewed" id="data-source" name="data_source" type="checkbox"/>
-                    <label class="tgl-btn" data-tg-off="json" data-tg-on="xml" for="data-source"></label>
-                </div>
-                <button type="button" class="action" id="workspaceButton">+</button>
-            </form>
             <div class="tabs"></div>
         </div>
 
@@ -37,6 +29,23 @@
         </div>
         <div class="main-right">
             <div class="search-filter">
+
+                <div class="row">
+                <div class="choose-data-source">
+                    <form id="workspace_form" method="post" action="{% url 'new-workspace' %}" class="row">
+                        {% csrf_token %}
+                        <div>
+                            <input class="tgl tgl-skewed" id="data-source" name="data_source" type="checkbox"/>
+                            <label class="tgl-btn" data-tg-off="json" data-tg-on="xml" for="data-source"></label>
+                        </div>
+                        <button type="button" class="action" id="workspaceButton">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                        </button>
+                    </form>
+
+                </div>
+
+
                 <form id="myForm" method="post" action="{% url 'view' %}">
                     {% csrf_token %}
                     <div class="file-search">
@@ -55,10 +64,12 @@
                         </div>
                         <button type="button" class="action" id="findButton">Find</button>
 <!--                        <button type="submit" class="action">Find</button>-->
-
-                        <div class="params"></div>
                     </div>
                 </form>
+                </div>
+
+                <div class="params">
+                </div>
             </div>
             <div class="main">
 <!--                {% block mainView %}-->
@@ -102,7 +113,6 @@
         function loadParams(params) {
             document.getElementById('search').value = params.search_param;
             filter_params = params.filter_params;
-            console.log(typeof (filter_params))
 
             document.getElementById('filter').value = '';
             document.querySelector('.params').innerHTML = '';
@@ -141,6 +151,7 @@
 
             const tabName = document.createElement("span");
             tabName.textContent = name;
+            newTab.appendChild(tabName);
 
             if (!isSelected) {
                 const closeButton = document.createElement("button");
@@ -157,7 +168,7 @@
                 });
             }
 
-            newTab.appendChild(tabName);
+
             return newTab;
         }
 
