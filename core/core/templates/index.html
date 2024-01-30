@@ -10,8 +10,22 @@
         <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
         <script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
     <body>
+
+        <div class="tab-bar">
+            <form id="workspace_form" method="post" action="{% url 'new-workspace' %}">
+                {% csrf_token %}
+                <div>
+                    <input class="tgl tgl-skewed" id="data-source" name="data_source" type="checkbox"/>
+                    <label class="tgl-btn" data-tg-off="json" data-tg-on="xml" for="data-source"></label>
+                </div>
+                <button type="button" class="action" id="workspaceButton">+</button>
+            </form>
+            <div class="tabs"></div>
+        </div>
+
         <div class="main-left">
             <h1>Graph visualizer</h1>
             <div class="small-views">
@@ -30,10 +44,10 @@
                             <input class="tgl tgl-skewed" id="visualizer" name="visualizer" type="checkbox"/>
                             <label class="tgl-btn" data-tg-off="simple" data-tg-on="block" for="visualizer"></label>
                         </div>
-                        <div>
-                            <input class="tgl tgl-skewed" id="data-source" name="data_source" type="checkbox"/>
-                            <label class="tgl-btn" data-tg-off="json" data-tg-on="xml" for="data-source"></label>
-                        </div>
+<!--                        <div>-->
+<!--                            <input class="tgl tgl-skewed" id="data-source" name="data_source" type="checkbox"/>-->
+<!--                            <label class="tgl-btn" data-tg-off="json" data-tg-on="xml" for="data-source"></label>-->
+<!--                        </div>-->
                         <div>
                             <label for="search">Search:</label>
                             <input id="search" name="search" type="text">
@@ -88,6 +102,104 @@
                 document.getElementById('filter').value = '';
             }
         }
+
+        function showTabs() {
+            document.querySelector('.tabs').innerHTML = '';
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'workspaces' %}",
+                success: function(response) {
+                    tabs = response.tabs;
+                    for (let tab of tabs) {
+                        const newTab = createTab(...tab);
+                        document.querySelector('.tabs').appendChild(newTab);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        function createTab(name, isSelected) {
+            const newTab = document.createElement("div");
+            //todo fix style
+            if (isSelected)
+                newTab.className = "tab selected-tab"
+            else
+                newTab.className = "tab";
+
+            const tabName = document.createElement("div");
+            tabName.textContent = name;
+
+            if (!isSelected) {
+                const closeButton = document.createElement("button");
+                closeButton.className = "btn";
+                closeButton.innerHTML = '<i class="fa fa-close"></i>';
+
+                closeButton.addEventListener('click', function() {
+                    removeWorkspace(name)
+                });
+                tabName.appendChild(closeButton);
+
+                tabName.addEventListener('click', function() {
+                    selectWorkspace(name)
+                });
+            }
+
+            newTab.appendChild(tabName);
+            return newTab;
+        }
+
+        function selectWorkspace(name) {
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'select-workspace' %}",
+                data: {'name': name},
+                success: function () {
+                  showTabs();
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            })
+        }
+
+        function removeWorkspace(name) {
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'remove-workspace' %}",
+                data: {'name': name},
+                success: function() {
+                    showTabs();
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        function addWorkspace() {
+            var formData = $('#workspace_form').serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'new-workspace' %}",
+                data: formData,
+                success: function() {
+                    showTabs();
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            $('#workspaceButton').on('click', function() {
+                addWorkspace();
+            });
+        });
 
         function submitForm() {
             var formData = $('#myForm').serialize();

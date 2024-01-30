@@ -12,6 +12,9 @@ class XMLDataSourceLoader(DataSourceService):
     def name(self):
         return "xml"
 
+    def file_name(self):
+        return "data.xml"
+
     def __init__(self):
         pass
 

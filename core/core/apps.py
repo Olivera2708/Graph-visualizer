@@ -22,20 +22,21 @@ class CoreConfig(AppConfig):
         self.workspaces.append(workspace)
         self.selected_workspace = workspace
 
-    def remove_workspace(self, workspace):
-        pass
-        #id ili ceo
+    def remove_workspace(self, name):
+        self.workspaces = [workspace for workspace in self.workspaces if workspace.name != name]
 
-    def select_workspace(self, next: Workspace):
-        self.selected_workspace = next
-        #id ili ceo
+    def select_workspace(self, name: str):
+        for ws in self.workspaces:
+            if ws.name == name:
+                self.selected_workspace = ws
+                break
+
+    def get_tabs(self):
+        return [(ws.name, ws.id == self.selected_workspace.id) for ws in self.workspaces]
 
 
     def update_workspace(self, data_source_id: str, search_param: str = '', filter_params: list = []):
-        if self.workspaces:
-            self.selected_workspace.update(data_source_id)
-        else:
-            self.add_workspace(data_source_id)
+        self.selected_workspace.update(data_source_id)
 
 
 
