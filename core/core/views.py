@@ -1,3 +1,4 @@
+import json
 import os
 import traceback
 
@@ -40,13 +41,18 @@ def remove_workspace(request):
 def select_workspace(request):
     config = apps.get_app_config('core')
     config.select_workspace(request.GET.get('name'))
-    return HttpResponse()
+    response = {'search_param': config.selected_workspace.search_param,
+                'filter_params': config.selected_workspace.filter_params}
+    return JsonResponse(response)
 
 
 
 def view(request):
     search = request.POST.get('search')
     visualizer = request.POST.get("visualizer")
+    filter_params = json.loads(request.POST.get('filter_params'))
+    print(filter_params)
+    print(type(filter_params))
 
     if visualizer is None:
         visualizer_name = "SimpleVisualizer"
@@ -65,8 +71,7 @@ def view(request):
         html = run_visualisation_plugins(visualizer_plugins, visualizer_name, graph)
         tree_html = load_tree(graph)
 
-        #todo save search and filter params
-        config.update_workspace(config.selected_workspace.data_source_id)
+        config.update_workspace(search, filter_params)
         print(config.selected_workspace)
 
         return JsonResponse({"template": html, "tree": tree_html})

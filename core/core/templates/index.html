@@ -44,10 +44,6 @@
                             <input class="tgl tgl-skewed" id="visualizer" name="visualizer" type="checkbox"/>
                             <label class="tgl-btn" data-tg-off="simple" data-tg-on="block" for="visualizer"></label>
                         </div>
-<!--                        <div>-->
-<!--                            <input class="tgl tgl-skewed" id="data-source" name="data_source" type="checkbox"/>-->
-<!--                            <label class="tgl-btn" data-tg-off="json" data-tg-on="xml" for="data-source"></label>-->
-<!--                        </div>-->
                         <div>
                             <label for="search">Search:</label>
                             <input id="search" name="search" type="text">
@@ -59,10 +55,10 @@
                         </div>
                         <button type="button" class="action" id="findButton">Find</button>
 <!--                        <button type="submit" class="action">Find</button>-->
+
+                        <div class="params"></div>
                     </div>
                 </form>
-                <div class="params">
-                </div>
             </div>
             <div class="main">
 <!--                {% block mainView %}-->
@@ -103,6 +99,21 @@
             }
         }
 
+        function loadParams(params) {
+            document.getElementById('search').value = params.search_param;
+            filter_params = params.filter_params;
+            console.log(typeof (filter_params))
+
+            document.getElementById('filter').value = '';
+            document.querySelector('.params').innerHTML = '';
+
+            if (!filter_params) return;
+            for (let filter of filter_params) {
+                const newParam = createParam(filter);
+                document.querySelector('.params').appendChild(newParam);
+            }
+        }
+
         function showTabs() {
             document.querySelector('.tabs').innerHTML = '';
             $.ajax({
@@ -123,13 +134,12 @@
 
         function createTab(name, isSelected) {
             const newTab = document.createElement("div");
-            //todo fix style
             if (isSelected)
                 newTab.className = "tab selected-tab"
             else
                 newTab.className = "tab";
 
-            const tabName = document.createElement("div");
+            const tabName = document.createElement("span");
             tabName.textContent = name;
 
             if (!isSelected) {
@@ -140,7 +150,7 @@
                 closeButton.addEventListener('click', function() {
                     removeWorkspace(name)
                 });
-                tabName.appendChild(closeButton);
+                newTab.appendChild(closeButton);
 
                 tabName.addEventListener('click', function() {
                     selectWorkspace(name)
@@ -156,8 +166,9 @@
                 type: 'GET',
                 url: "{% url 'select-workspace' %}",
                 data: {'name': name},
-                success: function () {
+                success: function (response) {
                   showTabs();
+                  loadParams(response);
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
@@ -170,13 +181,13 @@
                 type: 'GET',
                 url: "{% url 'remove-workspace' %}",
                 data: {'name': name},
-                success: function() {
-                    showTabs();
+                success: function () {
+                  showTabs();
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
                 }
-            });
+            })
         }
 
         function addWorkspace() {
@@ -188,6 +199,9 @@
                 data: formData,
                 success: function() {
                     showTabs();
+                    document.getElementById('search').value = '';
+                    document.getElementById('filter').value = '';
+                    document.querySelector('.params').innerHTML = '';
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
@@ -201,8 +215,18 @@
             });
         });
 
+        function readFilterValues() {
+            const filterParams = [];
+            document.querySelector('.params').querySelectorAll('.param')
+                .forEach(function(param) {
+                    filterParams.push(param.textContent);
+                });
+            return filterParams;
+        }
+
         function submitForm() {
-            var formData = $('#myForm').serialize();
+            var formData = $('#myForm').serializeArray();
+            formData.push({name: 'filter_params', value: JSON.stringify(readFilterValues())});
 
             $.ajax({
                 type: 'POST',
@@ -223,5 +247,7 @@
                 submitForm();
             });
         });
+
+        showTabs();
     </script>
 </html>

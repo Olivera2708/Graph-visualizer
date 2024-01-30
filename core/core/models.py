@@ -77,7 +77,7 @@ class Workspace:
     id = 1
 
     def __init__(self, data_source_id: str,
-                 search_param = "", filter_params=None):
+                 search_param: str = "", filter_params: list[str] = None):
 
         self.id = Workspace.id
         Workspace.id += 1
@@ -87,12 +87,9 @@ class Workspace:
         self.filter_params = filter_params
         self.name = data_source_id + ' #' + str(self.id)
 
-    def update(self, data_source_id: str,
-             search_param = "", filter_params=None):
-        self.data_source_id = data_source_id
+    def update(self, search_param: str = "", filter_params: list[str] = None):
         self.search_param = search_param
         self.filter_params = filter_params
-        self.name = data_source_id + ' #' + str(self.id)
 
     def __str__(self):
         return self.name
