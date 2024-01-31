@@ -1,0 +1,376 @@
+{% block style %}
+    <style>
+        svg {
+            width: 100%;
+            height: 99vh;
+        }
+
+        .node {
+            cursor: pointer;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ab7646;
+            stroke-width: 2px;
+        }
+
+        .link-directed {
+            fill: none;
+            stroke: #a18265;
+            stroke-width: 2px;
+            marker-end: url(#arrow);
+        }
+
+        path {
+            fill: #a18265;
+        }
+
+        div.detailsDisplay {
+            font-size: 13px;
+            position: absolute;
+            padding: 20px;
+            background-color: #dedded;
+            border: 1px solid #969696;
+            border-radius: 30px;
+            z-index: 3;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div>
+        <svg>
+            <defs>
+                <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z"></path>
+                </marker>   {# strelica za grane #}
+            </defs>
+        </svg>
+    </div>
+    <script>
+        if (typeof map !== 'undefined' && map instanceof Map) {
+            map.clear();
+        } else {
+            var map = new Map();
+        }       // ???
+
+        nodes =
+            {
+                {%  for node in nodes %}
+                    "node_{{ node.id }}":
+                        {
+                            id: "node_{{ node.id }}",
+                            name: "{{ node.name }}",
+                            attributes: [
+                                {% for attribute in node.attributes %}
+                                    {
+                                        id: "attribute_{{ attribute.id }}",
+                                        name: "{{ attribute.name }}",
+                                        value: "{{ attribute.value }}"
+                                    },
+                                {% endfor %}
+                            ]
+                        },
+                {% endfor %}
+            };      // prave se cvorovi
+
+        edges = [
+            {%  for edge in edges %}
+                {
+                    id: "edge_{{ edge.id }}",
+                    directed: "{{ edge.directed }}",
+                    source: "node_{{edge.fromNode.id}}",
+                    target: "node_{{edge.toNode.id}}",
+                    type: "type"
+                },
+            {% endfor %}
+        ]           // prave se grane
+
+        edges.forEach(function (edge) {
+            edge.source = nodes[edge.source];
+            edge.target = nodes[edge.target];
+        });     // vezuju se grane za cvorove
+
+        var force = d3.layout.force()
+            .size([900, 700])
+            .nodes(d3.values(nodes))
+            .links(edges)
+            .on("tick", tick)
+            .linkDistance(4000)
+            .charge(-1000)
+            .start();   // fizika
+
+        var svg = d3.select('svg')
+            .call(d3.behavior.zoom().on("zoom", function () {
+                if (d3.event.sourceEvent && d3.event.sourceEvent.type === "mousedown") {
+                    return;
+                }
+                svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
+            }))
+            .append("g");   // zumiranje na dvoklik
+
+        var link = svg.selectAll('.link')
+            .data(edges)
+            .enter().append('line')
+            .attr('class', function (d) {
+                return d.directed === "True" ? 'link-directed' : 'link';
+            });  // pravi linije
+
+        {#var div = d3.select('body').append('div')#}
+        {#    .attr('class', 'detailsDisplay')#}
+        {#    .style('display', 'none')#}
+        {#    .style('visibility', 'hidden'); // detalji na hover#}
+
+        var node = svg.selectAll('.node')
+            .data(force.nodes())
+            .enter().append('g')
+            .attr('class', 'node')
+            .attr('id', function (d) {
+                return d.id;
+            })
+            .on('click', function (d) {
+                svg.selectAll('.node rect')
+                    .attr('fill', '#fae0c3');
+
+                d3.select(this).select('rect')
+                    .attr('fill', '#fdc897');
+
+                d3.event.stopPropagation();
+
+                createGraph(d.name);
+            })
+            {#.on('mouseover', function (d) {#}
+            {#    var textSize = 13;#}
+            {#    div.attr('width', 300)#}
+            {#        .attr('height', 300)#}
+            {#        .style('font-family','sans-serif')#}
+            {#        .attr('text-anchor','start')#}
+            {#        .transition()#}
+            {#        .style("visibility", "visible")#}
+            {#        .style('display', 'block');#}
+            {##}
+            {#    var info = "";#}
+            {#    info += `${d.name}`#}
+            {#    info += "</br></br>"#}
+            {#    for(var i=0;i<d.attributes.length;i++){#}
+            {#        var attributeInfo = `${d.attributes[i].name}:  ${d.attributes[i].value}`;#}
+            {#        var textWidth = attributeInfo.length * (textSize / 2);#}
+            {#        if (textWidth > 300) {#}
+            {#            var wrappedLines = wordwrap(attributeInfo, 50).split('\n');#}
+            {#            info += wrappedLines.join("</br>");#}
+            {#        } else {#}
+            {#            info += attributeInfo;#}
+            {#        }#}
+            {#        if (i === d.attributes.length-1) {#}
+            {#            break;#}
+            {#        }#}
+            {#        info += "</br>";#}
+            {#    }#}
+            {##}
+            {#    if (info.length > 0) {#}
+            {#        div.html(info)#}
+            {#            .style("left", d3.event.pageX + "px")#}
+            {#            .style("top", d3.event.pageY + "px");#}
+            {#    }#}
+            {#    else {#}
+            {#        div.html("No more data for this node")#}
+            {#            .style("left", d3.event.pageX + "px")#}
+            {#            .style("top", d3.event.pageY + "px");#}
+            {#    }#}
+            {# }) #}
+            {#.on('mouseout', function(d){#}
+            {#    div.transition().style('visibility', 'hidden')#}
+            {#        .style('display', 'none');#}
+            {# }) #}
+            .call(force.drag);
+
+        function wordwrap(str, width) {
+            var regex = new RegExp('.{1,' + width + '}(\\s|$)|.{' + width + '}|.+$', 'g');
+            return str.match(regex).join('\n');
+        }
+
+        d3.selectAll('.node').each(function (d) {
+            showGraph(d);
+        });
+
+        var drag = d3.behavior.drag()
+            .on("dragstart", function (d) {
+                d3.event.sourceEvent.stopPropagation();
+                d.fixed = true;
+            })
+            .on("drag", function (d) {
+                d.x += d3.event.dx;
+                d.y += d3.event.dy;
+                tick();
+            })
+            .on("dragend", function (d) {
+                d.fixed = false;
+            });
+
+        node.call(drag);
+
+
+            {#var info = "";#}
+            {#    info += `${d.name}`#}
+            {#    info += "</br></br>"#}
+            {#    for(var i=0;i<d.attributes.length;i++){#}
+            {#        var attributeInfo = `${d.attributes[i].name}:  ${d.attributes[i].value}`;#}
+            {#        var textWidth = attributeInfo.length * (textSize / 2);#}
+            {#        if (textWidth > 300) {#}
+            {#            var wrappedLines = wordwrap(attributeInfo, 50).split('\n');#}
+            {#            info += wrappedLines.join("</br>");#}
+            {#        } else {#}
+            {#            info += attributeInfo;#}
+            {#        }#}
+            {#        if (i === d.attributes.length-1) {#}
+            {#            break;#}
+            {#        }#}
+            {#        info += "</br>";#}
+            {#    }#}
+            {##}
+            {#    if (info.length > 0) {#}
+            {#        div.html(info)#}
+            {#            .style("left", d3.event.pageX + "px")#}
+            {#            .style("top", d3.event.pageY + "px");#}
+            {#    }#}
+            {#    else {#}
+            {#        div.html("No more data for this node")#}
+            {#            .style("left", d3.event.pageX + "px")#}
+            {#            .style("top", d3.event.pageY + "px");#}
+            {#    }#}
+
+
+
+        function showGraph(d) {
+            var textSize = 20;
+            height = textSize + 10;
+
+            var g = d3.select("g#" + d.id);
+
+            var textElement = g
+                .append('text')
+                .attr('x', 0)
+                .attr('y', 21)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', textSize)
+                .attr('font-family', 'sans-serif')
+                .attr('fill', 'black')
+                .text(d.name);
+
+            var width = textElement.node().getBBox().width + 20;
+
+            var attributeInfo = "";
+            var attributeName = "";
+            var maxAttributeNameWidth = 0;
+
+            var split = 0;
+            for (var i = 0; i < d.attributes.length; i++) {
+                attributeName = d.attributes[i].name.replace(/_/g, ' ');
+                attributeInfo = `${attributeName}:  ${d.attributes[i].value}`;
+                split+=Math.floor(attributeInfo.length / 50);
+                split++;
+
+                var textAttribute = g
+                .append('text')
+                .attr('x', 10)
+                .attr('y', 21 + (i + 1) * 25)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', textSize)
+                .attr('font-family', 'sans-serif')
+                .attr('fill', 'black')
+                .text(attributeInfo.substring(0, 50));
+
+                var attributeWidth = textAttribute.node().getBBox().width + 20;
+                maxAttributeNameWidth = Math.max(maxAttributeNameWidth, attributeWidth);
+
+
+                textAttribute.remove();
+            }
+
+            width = Math.max(width, maxAttributeNameWidth + 30);
+
+            height = textSize + 10 + (split + 1) * 25;
+
+            g.append('rect')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', width)
+                .attr('height', height)
+                .attr('rx', 10)
+                .attr('ry', 10)
+                .attr('fill', '#fae0c3')
+                .attr('stroke', 'black')
+                .attr('stroke-width', 0.5);
+
+            textElement.remove();
+
+
+            d3.select("g#" + d.id)
+                .append('text')
+                .attr('x', width / 2)
+                .attr('y', 21)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', textSize)
+                .attr('font-family', 'sans-serif')
+                .attr('fill', 'black')
+                .text(d.name);
+            split = 0;
+            for (var i = 0; i < d.attributes.length; i++) {
+                attributeName = d.attributes[i].name.replace(/_/g, ' ');
+                attributeInfo = `${attributeName}:  ${d.attributes[i].value}`;
+
+                var lines = [];
+                var currentLine = '';
+                var words = attributeInfo.split(' ');
+
+                words.forEach(function (word) {
+                    if ((currentLine + " " + word).length <= 50) {
+                        currentLine += (currentLine === '' ? '' : ' ') + word;
+                    } else {
+                        lines.push(currentLine);
+                        currentLine = word;
+                    }
+                });
+
+                lines.push(currentLine);
+
+                for (var j = 0; j < lines.length; j++) {
+                    g.append('text')
+                        .attr('x', 10)
+                        .attr('y', 21 + (split + 1 + j) * 25)
+                        .attr('text-anchor', 'start')
+                        .attr('font-size', textSize)
+                        .attr('font-family', 'sans-serif')
+                        .attr('fill', 'black')
+                        .text(lines[j]);
+                }
+                split+=lines.length;
+            }
+        }
+
+        function tick(e) {
+            var width = 150;
+            var height = 30;
+            node.attr("transform", function (d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            });
+
+            link.attr('x1', function (d) {
+                width = map.get(d.source.id);
+
+                return d.source.x + width;
+                })
+                .attr('y1', function (d) {
+                    return d.source.y + height / 2;
+                })
+                .attr('x2', function (d) {
+                    return d.target.x;
+                })
+                .attr('y2', function (d) {
+                    return d.target.y + height / 2;
+                });
+
+        }
+    </script>
+{% endblock %}
