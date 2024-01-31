@@ -93,22 +93,32 @@
         });
 
         var force = d3.layout.force()
-            .size([900, 700])
+            .size([2000, 2000])
             .nodes(d3.values(nodes))
             .links(edges)
             .on("tick", tick)
-            .linkDistance(4000)
-            .charge(-1000)
+            .linkDistance(6000)
+            .charge(-12000)
             .start();
 
+        var initialScale = 0.05;
+        var currentTranslate = [0, 0];
+
+        var initialTranslate = [(1 - initialScale) * 1000 / 2, (1 - initialScale) * 700 / 2];
+
+        var zoom = d3.behavior.zoom()
+            .scale(initialScale)
+            .translate(initialTranslate)  // Use the calculated initial translation
+            .on("zoom", function () {
+                currentTranslate = d3.event.translate;
+                svg.attr("transform", "translate(" + currentTranslate + ")" + " scale(" + d3.event.scale + ")");
+            });
+
         var svg = d3.select('svg')
-            .call(d3.behavior.zoom().on("zoom", function () {
-                if (d3.event.sourceEvent && d3.event.sourceEvent.type === "mousedown") {
-                    return;
-                }
-                svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
-            }))
-            .append("g");
+            .call(zoom)
+            .append("g")
+            .attr("transform", "translate(" + initialTranslate + ") scale(" + initialScale + ")"); // Set initial position directly
+
 
         var link = svg.selectAll('.link')
             .data(edges)
@@ -210,7 +220,7 @@
             }
 
             width = Math.max(width, maxAttributeNameWidth + 30);
-
+            map.set(d.id, width)
             height = textSize + 10 + (split + 1) * 25;
 
             g.append('rect')
@@ -293,5 +303,6 @@
                 });
 
         }
+
     </script>
 {% endblock %}
