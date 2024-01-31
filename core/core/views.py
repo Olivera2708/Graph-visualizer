@@ -26,7 +26,17 @@ def add_new_workspace(request):
         data_source_id = "animals json"
     else:
         data_source_id = "people xml"
+
     config = apps.get_app_config('core')
+
+    search = request.POST.get('search_param')
+    filter_params_request = request.POST.get('filter_params')
+    filter_params = None
+    if filter_params_request:
+        filter_params = json.loads(filter_params_request)
+
+    config.update_workspace(search, filter_params)
+
     config.add_workspace(data_source_id)
 
     print([ws.name for ws in config.workspaces])
@@ -40,6 +50,15 @@ def remove_workspace(request):
 
 def select_workspace(request):
     config = apps.get_app_config('core')
+
+    search = request.GET.get('search_param')
+    filter_params_request = request.GET.get('filter_params')
+    filter_params = None
+    if filter_params_request:
+        filter_params = json.loads(filter_params_request)
+
+    config.update_workspace(search, filter_params)
+
     config.select_workspace(request.GET.get('name'))
     response = {'search_param': config.selected_workspace.search_param,
                 'filter_params': config.selected_workspace.filter_params}
