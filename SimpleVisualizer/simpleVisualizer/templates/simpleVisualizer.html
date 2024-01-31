@@ -101,13 +101,19 @@
             .charge(-100)
             .start();
 
-        var svg = d3.select('svg')
-            .call(d3.behavior.zoom().on("zoom", function () {
+        let zoom = d3.behavior.zoom()
+            .on("zoom", function () {
                 if (d3.event.sourceEvent && d3.event.sourceEvent.type === "mousedown") {
                     return;
                 }
                 svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
-            }))
+
+                let zoomEvent = new CustomEvent('mainZoom');
+                document.dispatchEvent(zoomEvent);
+            });
+
+        var svg = d3.select('#svg-main')
+            .call(zoom)
             .append("g");
 
         var link = svg.selectAll('.link')

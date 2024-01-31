@@ -40,13 +40,15 @@
     <svg id="bird_view_svg" class="bird-svg"></svg>
 </div>
 <script>
+    document.addEventListener('mainZoom', function () {
+        updateViewportRect();
+    });
     function birdView(e)
     {
         isLoaded = true;
         let main = d3.select(".svg-bird").html();
 
         let birdView = d3.select("#bird_view_svg").html(main);
-
 
         let viewportRect = birdView.select("#viewport");
         if (viewportRect.empty()) {
@@ -68,8 +70,27 @@
         birdView.select("g").attr("transform", "translate(" + t + ") scale(" + scale + ")");
         birdView.selectAll("g").attr('class', 'node-bird');
 
+        updateViewportRect();
 
         setTimeout(function() {isLoaded = false;}, 100);
+    }
+
+    function updateViewportRect() {
+        let mainViewG = d3.select(".svg-bird").select("g");
+        let mainViewBBox = mainViewG.node().getBoundingClientRect();
+
+        let gCanvas = d3.select(".bird-svg").select("g").node().getBoundingClientRect();
+
+        let x = (window.innerWidth / 4 - mainViewBBox.left) / (mainViewBBox.width / gCanvas.width);
+        let y = (50 - mainViewBBox.top) / (mainViewBBox.height / gCanvas.height);
+        let width = gCanvas.width / (mainViewBBox.width / (window.innerWidth*0.75));
+        let height = gCanvas.height / (mainViewBBox.height / (window.innerHeight - 50));
+
+        d3.select("#viewport")
+            .attr("x", x)
+            .attr("y", y)
+            .attr("width", width)
+            .attr("height", height);
     }
 
     const config = { attributes: true, childList: true, subtree: true };
