@@ -1,0 +1,89 @@
+{% block style %}
+<style>
+    .bird-svg {
+        width: 100%;
+        height: 36vh;
+    }
+
+    .link-bird {
+        fill: none;
+        stroke: #ab7646;
+        stroke-width: 2px;
+    }
+
+    .link-bird-directed {
+        fill: none;
+        stroke: #a18265;
+        stroke-width: 2px;
+        marker-end: url(#arrow);
+    }
+
+    .path-bird {
+        fill: #a18265;
+    }
+
+    #viewport {
+        fill: none;
+        stroke: red;
+        stroke-width: 1px;
+        z-index: 1;
+    }
+
+    .node-bird {
+        cursor: default !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+    <svg id="bird_view_svg" class="bird-svg"></svg>
+</div>
+<script>
+    function birdView(e)
+    {
+        isLoaded = true;
+        let main = d3.select(".svg-bird").html();
+
+        let birdView = d3.select("#bird_view_svg").html(main);
+
+
+        let viewportRect = birdView.select("#viewport");
+        if (viewportRect.empty()) {
+            viewportRect = birdView.append("rect")
+                .attr("id", "viewport");
+        }
+
+        let graphsize = d3.select(".svg-bird").select("g").node().getBBox();
+
+        let parentCanvas = d3.select("#bird_view_svg");
+        let parentWidth = parseInt(parentCanvas.style("width"), 10);
+        let parentHeight = parseInt(parentCanvas.style("height"), 10);
+
+        let scale = Math.min(parentWidth / graphsize.width, parentHeight / graphsize.height);
+        let x = d3.select("#bird_view_svg").select("g").node().getBBox().x;
+        let y = d3.select("#bird_view_svg").select("g").node().getBBox().y;
+        let t = [-x*scale, -y*scale];
+
+        birdView.select("g").attr("transform", "translate(" + t + ") scale(" + scale + ")");
+        birdView.selectAll("g").attr('class', 'node-bird');
+
+
+        setTimeout(function() {isLoaded = false;}, 100);
+    }
+
+    const config = { attributes: true, childList: true, subtree: true };
+    const observer = new MutationObserver( () => {
+        if(!isLoaded){
+            birdView();
+        }
+    });
+
+    let isLoaded = false;
+    (() => {
+        const target = d3.select(".svg-bird").node();
+        observer.observe(target, config);
+    })()
+
+</script>
+{% endblock %}
