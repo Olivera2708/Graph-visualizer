@@ -20,15 +20,15 @@ def get_workspaces(request):
     return JsonResponse(response)
 
 
+def get_data_source_plugins(request):
+    config = apps.get_app_config('core')
+    ids = [plugin.id() for plugin in config.data_source_plugins]
+    print(ids)
+    return JsonResponse({'plugins': ids})
+
+
 def add_new_workspace(request):
-    data_source = request.POST.get("data_source")
-
-    #todo change
-    if data_source is None:
-        data_source_id = "animals json"
-    else:
-        data_source_id = "people xml"
-
+    data_source_id = request.POST.get("data_source_id")
 
     config = apps.get_app_config('core')
 

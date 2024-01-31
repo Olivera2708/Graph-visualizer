@@ -11,6 +11,8 @@
         <script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
     </head>
     <body>
 
@@ -19,7 +21,12 @@
         </div>
 
         <div class="main-left">
-            <h1>Graph visualizer</h1>
+            <div class="row">
+                <h1>Graph visualizer</h1>
+                <button type="button" class="action" id="workspaceButton">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                </button>
+            </div>
             <div class="small-views">
                 <div class="tree-view">
                 </div>
@@ -29,23 +36,6 @@
         </div>
         <div class="main-right">
             <div class="search-filter">
-
-                <div class="row">
-                <div class="choose-data-source">
-                    <form id="workspace_form" method="post" action="{% url 'new-workspace' %}" class="row">
-                        {% csrf_token %}
-                        <div>
-                            <input class="tgl tgl-skewed" id="data-source" name="data_source" type="checkbox"/>
-                            <label class="tgl-btn" data-tg-off="json" data-tg-on="xml" for="data-source"></label>
-                        </div>
-                        <button type="button" class="action" id="workspaceButton">
-                            <i class="fa fa-plus" aria-hidden="true"></i>
-                        </button>
-                    </form>
-
-                </div>
-
-
                 <form id="myForm" method="post" action="{% url 'view' %}">
                     {% csrf_token %}
                     <div class="file-search">
@@ -66,7 +56,6 @@
 <!--                        <button type="submit" class="action">Find</button>-->
                     </div>
                 </form>
-                </div>
 
                 <div class="params">
                 </div>
@@ -77,6 +66,12 @@
 <!--                {% endblock %}-->
             </div>
         </div>
+
+        <div id="dialog" title="Which data-source do you wish to use?">
+            <select id="string-dropdown" class="form-control"></select>
+        </div>
+
+
     </body>
     <script>
         function createParam(filterValue) {
@@ -230,11 +225,6 @@
             });
         }
 
-        $(document).ready(function() {
-            $('#workspaceButton').on('click', function() {
-                addWorkspace();
-            });
-        });
 
         function readFilterValues() {
             const filterParams = [];
@@ -270,6 +260,79 @@
             });
         });
 
+
+
         showTabs();
+
+
+
+        function loadDialog() {
+            $.ajax({
+                url: '{% url "source-plugins" %}',
+                type: 'GET',
+                success: function(response) {
+                    var dropdown = $('#string-dropdown');
+                    dropdown.empty();
+                    $.each(response.plugins, function(index, value) {
+                        dropdown.append($('<option>').text(value).attr('value', value));
+                    });
+                    createDialog();
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+
+        function createDialog() {
+            $('#dialog').dialog({
+                modal: true,
+                resizable: false,
+                draggable: true,
+                position: { my: 'center', at: 'center', of: window },
+                buttons: {
+                    "Cancel": function() {
+                        $(this).dialog("close");
+                    },
+                    "OK": function() {
+                        newWorkspace();
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        }
+
+        function newWorkspace() {
+            let data = {};
+            data.search_param = document.getElementById('search').value;
+            data.filter_params = JSON.stringify(readFilterValues());
+            data.root_node = localStorage.getItem('root_node_name');
+            data.data_source_id = $('#string-dropdown').val();
+            data.csrfmiddlewaretoken = '{{ csrf_token }}'
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url "new-workspace" %}',
+                data: data,
+                success: function() {
+                    showTabs();
+                    document.getElementById('search').value = '';
+                    document.getElementById('filter').value = '';
+                    document.querySelector('.params').innerHTML = '';
+                    submitForm();
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            $('#workspaceButton').on('click', function() {
+                loadDialog();
+            });
+        });
+
+
     </script>
 </html>

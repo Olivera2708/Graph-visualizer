@@ -91,14 +91,9 @@ input {
 }
 
 .file-search {
-    padding: 0.8rem 1rem 0 0.8rem;
+    padding: 0.8rem 1rem 0.5rem 0.8rem;
     display: grid;
-    grid-template-columns: 15% 40% 50% 10%;
-}
-
-.choose-data-source {
-    padding: 0.8rem 0.2rem 1rem 1rem;
-    display: flex;
+    grid-template-columns: 10% 30% 40% 10%;
 }
 
 .row {
@@ -179,7 +174,69 @@ input {
     cursor: pointer;
 }
 
-
 .selected-tab {
     background: #fcd0a7;
 }
+
+#workspaceButton {
+    height: fit-content;
+    align-self: center;
+}
+
+#dialog {
+    display: none;
+}
+
+.visible {
+    display: block;
+}
+
+.ui-widget-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: 0.5;
+    z-index: 1000;
+}
+
+.ui-dialog {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 1001;
+    background: #dedded;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: black solid 1px;
+}
+
+.ui-dialog-content {
+    text-align: center;
+    padding: 10px;
+}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+    text-align: center;
+}
+
+.ui-dialog button {
+    margin: 0 0.5rem 0 0.5rem;
+    background: #fae0c3;
+    border-radius: 0.5rem;
+    border: black solid 1px;
+}
+
+.ui-dialog button:hover {
+    background: #fcd0a7;
+    border-radius: 0.5rem;
+    border: black solid 1px;
+}
+
+.ui-dialog-titlebar-close {
+    display: none;
+}
+
