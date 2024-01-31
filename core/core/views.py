@@ -22,10 +22,13 @@ def get_workspaces(request):
 
 def add_new_workspace(request):
     data_source = request.POST.get("data_source")
+
+    #todo change
     if data_source is None:
         data_source_id = "animals json"
     else:
         data_source_id = "people xml"
+
 
     config = apps.get_app_config('core')
 
@@ -34,8 +37,9 @@ def add_new_workspace(request):
     filter_params = None
     if filter_params_request:
         filter_params = json.loads(filter_params_request)
+    root_node = request.POST.get('root_node')
 
-    config.update_workspace(search, filter_params)
+    config.update_workspace(search, filter_params, root_node)
 
     config.add_workspace(data_source_id)
 
@@ -56,12 +60,14 @@ def select_workspace(request):
     filter_params = None
     if filter_params_request:
         filter_params = json.loads(filter_params_request)
+    root_node = request.GET.get('root_node')
 
-    config.update_workspace(search, filter_params)
+    config.update_workspace(search, filter_params, root_node)
 
     config.select_workspace(request.GET.get('name'))
     response = {'search_param': config.selected_workspace.search_param,
-                'filter_params': config.selected_workspace.filter_params}
+                'filter_params': config.selected_workspace.filter_params,
+                'root_node': config.selected_workspace.root_node}
     return JsonResponse(response)
 
 
@@ -90,9 +96,6 @@ def view(request):
         graph = start_source_plugin(data_source_plugins, config.selected_workspace.data_source_id)
         html = run_visualisation_plugins(visualizer_plugins, visualizer_name, graph)
         tree_html = load_tree(graph)
-
-        config.update_workspace(search, filter_params)
-        print(config.selected_workspace)
 
         return JsonResponse({"template": html, "tree": tree_html})
     except Exception as e:

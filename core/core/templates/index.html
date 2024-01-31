@@ -110,9 +110,8 @@
             }
         }
 
-        function loadParams(params) {
-            document.getElementById('search').value = params.search_param;
-            filter_params = params.filter_params;
+        function loadParams(search_param, filter_params) {
+            document.getElementById('search').value = search_param;
 
             document.getElementById('filter').value = '';
             document.querySelector('.params').innerHTML = '';
@@ -176,9 +175,7 @@
             data.name = name;
             data.search_param = search_param;
             data.filter_params = JSON.stringify(readFilterValues());
-
-            //todo
-            // data.push({name: 'selected_node_name', value: ""});
+            data.root_node = localStorage.getItem('root_node_name');
 
             $.ajax({
                 type: 'GET',
@@ -186,8 +183,8 @@
                 data: data,
                 success: function (response) {
                   showTabs();
-                  loadParams(response);
-                  submitForm();
+                  loadParams(response.search_param, response.filter_params);
+                  submitForm(response.root_node);
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
@@ -213,7 +210,8 @@
             var formData = $('#workspace_form').serializeArray();
             formData.push({name: 'search_param', value: document.getElementById('search').value});
             formData.push({name: 'filter_params', value: JSON.stringify(readFilterValues())});
-
+            root_node_name = localStorage.getItem('root_node_name');
+            formData.push({name: 'root_node', value: root_node_name});
 
             $.ajax({
                 type: 'POST',
@@ -247,7 +245,7 @@
             return filterParams;
         }
 
-        function submitForm() {
+        function submitForm(root_node = '') {
             var formData = $('#myForm').serializeArray();
             formData.push({name: 'filter_params', value: JSON.stringify(readFilterValues())});
 
@@ -258,6 +256,7 @@
                 success: function (response) {
                     $('.main').html(response.template);
                     $('.tree-view').html(response.tree);
+                    createGraph(root_node);
                 },
                 error: function () {
                     console.error('AJAX request failed');

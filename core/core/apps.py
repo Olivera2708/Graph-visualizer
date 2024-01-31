@@ -35,9 +35,9 @@ class CoreConfig(AppConfig):
         return [(ws.name, ws.id == self.selected_workspace.id) for ws in self.workspaces]
 
 
-    def update_workspace(self, search_param: str = '', filter_params: list[str] = None):
+    def update_workspace(self, search_param: str = '', filter_params: list[str] = None, root_node: str = ''):
         if self.selected_workspace is not None:
-            self.selected_workspace.update(search_param, filter_params)
+            self.selected_workspace.update(search_param, filter_params, root_node)
 
 
 
