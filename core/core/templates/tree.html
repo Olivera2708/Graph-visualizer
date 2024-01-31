@@ -88,7 +88,7 @@
 {% block content %}
     <div id="treeview" class="tree"></div>
     <script>
-        let treeData = [];
+        treeData = [];
 
         function createGraph(selected){
             let parentElement = document.getElementById('treeview');
@@ -117,6 +117,9 @@
             {% for edge in edges %}
                 if ({{ edge.toNode.id }} == node_id){
                     ret.push({label: "{{ edge.fromNode.name }}" });
+                }
+                if ("{{ edge.directed }}" === "False" && {{ edge.fromNode.id }} == node_id){
+                    ret.push({label: "{{ edge.toNode.name }}" });
                 }
             {% endfor %}
             return ret;
