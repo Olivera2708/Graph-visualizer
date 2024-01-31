@@ -53,7 +53,7 @@
             map.clear();
         } else {
             var map = new Map();
-        }       // ???
+        }
 
         nodes =
             {
@@ -73,7 +73,7 @@
                             ]
                         },
                 {% endfor %}
-            };      // prave se cvorovi
+            };
 
         edges = [
             {%  for edge in edges %}
@@ -85,12 +85,12 @@
                     type: "type"
                 },
             {% endfor %}
-        ]           // prave se grane
+        ]
 
         edges.forEach(function (edge) {
             edge.source = nodes[edge.source];
             edge.target = nodes[edge.target];
-        });     // vezuju se grane za cvorove
+        });
 
         var force = d3.layout.force()
             .size([900, 700])
@@ -99,7 +99,7 @@
             .on("tick", tick)
             .linkDistance(4000)
             .charge(-1000)
-            .start();   // fizika
+            .start();
 
         var svg = d3.select('svg')
             .call(d3.behavior.zoom().on("zoom", function () {
@@ -108,19 +108,14 @@
                 }
                 svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
             }))
-            .append("g");   // zumiranje na dvoklik
+            .append("g");
 
         var link = svg.selectAll('.link')
             .data(edges)
             .enter().append('line')
             .attr('class', function (d) {
                 return d.directed === "True" ? 'link-directed' : 'link';
-            });  // pravi linije
-
-        {#var div = d3.select('body').append('div')#}
-        {#    .attr('class', 'detailsDisplay')#}
-        {#    .style('display', 'none')#}
-        {#    .style('visibility', 'hidden'); // detalji na hover#}
+            });
 
         var node = svg.selectAll('.node')
             .data(force.nodes())
@@ -140,49 +135,6 @@
 
                 createGraph(d.name);
             })
-            {#.on('mouseover', function (d) {#}
-            {#    var textSize = 13;#}
-            {#    div.attr('width', 300)#}
-            {#        .attr('height', 300)#}
-            {#        .style('font-family','sans-serif')#}
-            {#        .attr('text-anchor','start')#}
-            {#        .transition()#}
-            {#        .style("visibility", "visible")#}
-            {#        .style('display', 'block');#}
-            {##}
-            {#    var info = "";#}
-            {#    info += `${d.name}`#}
-            {#    info += "</br></br>"#}
-            {#    for(var i=0;i<d.attributes.length;i++){#}
-            {#        var attributeInfo = `${d.attributes[i].name}:  ${d.attributes[i].value}`;#}
-            {#        var textWidth = attributeInfo.length * (textSize / 2);#}
-            {#        if (textWidth > 300) {#}
-            {#            var wrappedLines = wordwrap(attributeInfo, 50).split('\n');#}
-            {#            info += wrappedLines.join("</br>");#}
-            {#        } else {#}
-            {#            info += attributeInfo;#}
-            {#        }#}
-            {#        if (i === d.attributes.length-1) {#}
-            {#            break;#}
-            {#        }#}
-            {#        info += "</br>";#}
-            {#    }#}
-            {##}
-            {#    if (info.length > 0) {#}
-            {#        div.html(info)#}
-            {#            .style("left", d3.event.pageX + "px")#}
-            {#            .style("top", d3.event.pageY + "px");#}
-            {#    }#}
-            {#    else {#}
-            {#        div.html("No more data for this node")#}
-            {#            .style("left", d3.event.pageX + "px")#}
-            {#            .style("top", d3.event.pageY + "px");#}
-            {#    }#}
-            {# }) #}
-            {#.on('mouseout', function(d){#}
-            {#    div.transition().style('visibility', 'hidden')#}
-            {#        .style('display', 'none');#}
-            {# }) #}
             .call(force.drag);
 
         function wordwrap(str, width) {
@@ -209,37 +161,6 @@
             });
 
         node.call(drag);
-
-
-            {#var info = "";#}
-            {#    info += `${d.name}`#}
-            {#    info += "</br></br>"#}
-            {#    for(var i=0;i<d.attributes.length;i++){#}
-            {#        var attributeInfo = `${d.attributes[i].name}:  ${d.attributes[i].value}`;#}
-            {#        var textWidth = attributeInfo.length * (textSize / 2);#}
-            {#        if (textWidth > 300) {#}
-            {#            var wrappedLines = wordwrap(attributeInfo, 50).split('\n');#}
-            {#            info += wrappedLines.join("</br>");#}
-            {#        } else {#}
-            {#            info += attributeInfo;#}
-            {#        }#}
-            {#        if (i === d.attributes.length-1) {#}
-            {#            break;#}
-            {#        }#}
-            {#        info += "</br>";#}
-            {#    }#}
-            {##}
-            {#    if (info.length > 0) {#}
-            {#        div.html(info)#}
-            {#            .style("left", d3.event.pageX + "px")#}
-            {#            .style("top", d3.event.pageY + "px");#}
-            {#    }#}
-            {#    else {#}
-            {#        div.html("No more data for this node")#}
-            {#            .style("left", d3.event.pageX + "px")#}
-            {#            .style("top", d3.event.pageY + "px");#}
-            {#    }#}
-
 
 
         function showGraph(d) {
