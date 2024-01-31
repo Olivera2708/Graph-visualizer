@@ -101,7 +101,7 @@
             .charge(-100)
             .start();
 
-        let zoom = d3.behavior.zoom()
+        var zoom = d3.behavior.zoom()
             .on("zoom", function () {
                 if (d3.event.sourceEvent && d3.event.sourceEvent.type === "mousedown") {
                     return;

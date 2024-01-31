@@ -93,14 +93,14 @@
             .attr("height", height);
     }
 
-    const config = { attributes: true, childList: true, subtree: true };
-    const observer = new MutationObserver( () => {
+    var config = { attributes: true, childList: true, subtree: true };
+    var observer = new MutationObserver( () => {
         if(!isLoaded){
             birdView();
         }
     });
 
-    let isLoaded = false;
+    var isLoaded = false;
     (() => {
         const target = d3.select(".svg-bird").node();
         observer.observe(target, config);
