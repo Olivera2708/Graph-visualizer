@@ -100,6 +100,8 @@ def view(request):
     data_source_plugins = config.data_source_plugins
     visualizer_plugins = config.visualizer_plugins
 
+    config.update_workspace(search, filter_params)
+
     if not config.selected_workspace:
         return JsonResponse({"template": ""})
 
