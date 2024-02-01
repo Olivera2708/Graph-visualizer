@@ -9,5 +9,6 @@ urlpatterns = [
     path('new-workspace', views.add_new_workspace, name='new-workspace'),
     path('remove-workspace', views.remove_workspace, name='remove-workspace'),
     path('select-workspace', views.select_workspace, name='select-workspace'),
+    path('get-workspace', views.get_current_workspace, name='get-workspace'),
     path('workspaces', views.get_workspaces, name='workspaces')
 ]

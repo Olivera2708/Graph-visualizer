@@ -191,6 +191,21 @@
             })
         }
 
+        function onReload() {
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'get-workspace' %}",
+                success: function (response) {
+                  showTabs();
+                  loadParams(response.search_param, response.filter_params);
+                  submitForm(response.root_node);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            })
+        }
+
         function removeWorkspace(name) {
             $.ajax({
                 type: 'GET',
@@ -225,7 +240,8 @@
                 success: function (response) {
                     $('.main').html(response.template);
                     $('.tree-view').html(response.tree);
-                    createGraph(root_node);
+                    if (root_node)
+                        createGraph(root_node);
                 },
                 error: function () {
                     console.error('AJAX request failed');
@@ -306,7 +322,7 @@
             });
         });
 
-        showTabs();
+        onReload();
 
     </script>
 </html>

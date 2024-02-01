@@ -72,6 +72,16 @@ def select_workspace(request):
     return JsonResponse(response)
 
 
+def get_current_workspace(request):
+    config = apps.get_app_config('core')
+    if config.selected_workspace:
+        response = {'search_param': config.selected_workspace.search_param,
+                'filter_params': config.selected_workspace.filter_params,
+                'root_node': config.selected_workspace.root_node}
+    else:
+        response = {}
+    return JsonResponse(response)
+
 
 def view(request):
     search = request.POST.get('search')
