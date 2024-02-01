@@ -10,10 +10,23 @@
         <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
         <script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
     </head>
     <body>
+
+        <div class="tab-bar">
+            <div class="tabs"></div>
+        </div>
+
         <div class="main-left">
-            <h1>Graph visualizer</h1>
+            <div class="row">
+                <h1>Graph visualizer</h1>
+                <button type="button" class="action" id="workspaceButton">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                </button>
+            </div>
             <div class="small-views">
                 <div class="tree-view">
                 </div>
@@ -31,10 +44,6 @@
                             <label class="tgl-btn" data-tg-off="simple" data-tg-on="block" for="visualizer"></label>
                         </div>
                         <div>
-                            <input class="tgl tgl-skewed" id="data-source" name="data_source" type="checkbox"/>
-                            <label class="tgl-btn" data-tg-off="json" data-tg-on="xml" for="data-source"></label>
-                        </div>
-                        <div>
                             <label for="search">Search:</label>
                             <input id="search" name="search" type="text">
                         </div>
@@ -47,6 +56,7 @@
 <!--                        <button type="submit" class="action">Find</button>-->
                     </div>
                 </form>
+
                 <div class="params">
                 </div>
             </div>
@@ -56,6 +66,12 @@
 <!--                {% endblock %}-->
             </div>
         </div>
+
+        <div id="dialog" title="Which data-source do you wish to use?">
+            <select id="string-dropdown" class="form-control"></select>
+        </div>
+
+
     </body>
     <script>
         function createParam(filterValue) {
@@ -89,8 +105,134 @@
             }
         }
 
-        function submitForm() {
-            var formData = $('#myForm').serialize();
+        function loadParams(search_param, filter_params) {
+            if (search_param)
+                document.getElementById('search').value = search_param;
+
+            document.getElementById('filter').value = '';
+            document.querySelector('.params').innerHTML = '';
+
+            if (!filter_params) return;
+            for (let filter of filter_params) {
+                const newParam = createParam(filter);
+                document.querySelector('.params').appendChild(newParam);
+            }
+        }
+
+        function showTabs() {
+            document.querySelector('.tabs').innerHTML = '';
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'workspaces' %}",
+                success: function(response) {
+                    tabs = response.tabs;
+                    if (!tabs[0]) {
+                        loadDialog();
+                        return;
+                    }
+                    for (let tab of tabs) {
+                        const newTab = createTab(...tab);
+                        document.querySelector('.tabs').appendChild(newTab);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        function createTab(name, isSelected) {
+            const newTab = document.createElement("div");
+            if (isSelected)
+                newTab.className = "tab selected-tab"
+            else
+                newTab.className = "tab";
+
+            const tabName = document.createElement("span");
+            tabName.textContent = name;
+            newTab.appendChild(tabName);
+
+            if (!isSelected) {
+                const closeButton = document.createElement("button");
+                closeButton.className = "btn";
+                closeButton.innerHTML = '<i class="fa fa-close"></i>';
+
+                closeButton.addEventListener('click', function() {
+                    removeWorkspace(name)
+                });
+                newTab.appendChild(closeButton);
+
+                tabName.addEventListener('click', function() {
+                    selectWorkspace(name)
+                });
+            }
+            return newTab;
+        }
+
+        function selectWorkspace(name) {
+            let search_param = document.getElementById('search').value;
+            let data = {};
+            data.name = name;
+            data.search_param = search_param;
+            data.filter_params = JSON.stringify(readFilterValues());
+            data.root_node = localStorage.getItem('root_node_name');
+
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'select-workspace' %}",
+                data: data,
+                success: function (response) {
+                  showTabs();
+                  loadParams(response.search_param, response.filter_params);
+                  submitForm(response.root_node);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            })
+        }
+
+        function onReload() {
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'get-workspace' %}",
+                success: function (response) {
+                  showTabs();
+                  loadParams(response.search_param, response.filter_params);
+                  submitForm(response.root_node);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            })
+        }
+
+        function removeWorkspace(name) {
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'remove-workspace' %}",
+                data: {'name': name},
+                success: function () {
+                  showTabs();
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            })
+        }
+
+        function readFilterValues() {
+            const filterParams = [];
+            document.querySelector('.params').querySelectorAll('.param')
+                .forEach(function(param) {
+                    filterParams.push(param.textContent);
+                });
+            return filterParams;
+        }
+
+        function submitForm(root_node = '') {
+            var formData = $('#myForm').serializeArray();
+            formData.push({name: 'filter_params', value: JSON.stringify(readFilterValues())});
 
             $.ajax({
                 type: 'POST',
@@ -100,6 +242,8 @@
                     $('.main').html(response.template);
                     $('.bird-view').html(response.bird);
                     $('.tree-view').html(response.tree);
+                    if (root_node)
+                        createGraph(root_node);
                 },
                 error: function () {
                     console.error('AJAX request failed');
@@ -112,5 +256,75 @@
                 submitForm();
             });
         });
+
+        function loadDialog() {
+            $.ajax({
+                url: '{% url "source-plugins" %}',
+                type: 'GET',
+                success: function(response) {
+                    var dropdown = $('#string-dropdown');
+                    dropdown.empty();
+                    $.each(response.plugins, function(index, value) {
+                        dropdown.append($('<option>').text(value).attr('value', value));
+                    });
+                    createDialog();
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+
+        function createDialog() {
+            $('#dialog').dialog({
+                modal: true,
+                resizable: false,
+                draggable: true,
+                position: { my: 'center', at: 'center', of: window },
+                buttons: {
+                    "Cancel": function() {
+                        $(this).dialog("close");
+                    },
+                    "OK": function() {
+                        addWorkspace();
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        }
+
+        function addWorkspace() {
+            let data = {};
+            data.search_param = document.getElementById('search').value;
+            data.filter_params = JSON.stringify(readFilterValues());
+            data.root_node = localStorage.getItem('root_node_name');
+            data.data_source_id = $('#string-dropdown').val();
+            data.csrfmiddlewaretoken = '{{ csrf_token }}'
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url "new-workspace" %}',
+                data: data,
+                success: function() {
+                    showTabs();
+                    document.getElementById('search').value = '';
+                    document.getElementById('filter').value = '';
+                    document.querySelector('.params').innerHTML = '';
+                    submitForm();
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            $('#workspaceButton').on('click', function() {
+                loadDialog();
+            });
+        });
+
+        onReload();
+
     </script>
 </html>

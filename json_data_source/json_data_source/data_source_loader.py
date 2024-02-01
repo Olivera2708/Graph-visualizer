@@ -6,10 +6,13 @@ import json
 class JsonDataSourceLoader(DataSourceService):
 
     def id(self):
-        pass
+        return 'animals json'
 
     def name(self):
         return "json"
+
+    def file_name(self):
+        return "data.json"
 
     def __init__(self):
         pass
