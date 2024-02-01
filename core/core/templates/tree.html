@@ -91,6 +91,8 @@
         treeData = [];
 
         function createGraph(selected){
+            localStorage.setItem('root_node_name', selected);
+
             let parentElement = document.getElementById('treeview');
             createNodes(selected, parentElement, true);
         }

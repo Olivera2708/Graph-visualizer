@@ -7,10 +7,13 @@ from core.core.services.data_source_service import DataSourceService
 class XMLDataSourceLoader(DataSourceService):
     
     def id(self):
-        pass
+        return "people xml"
 
     def name(self):
         return "xml"
+
+    def file_name(self):
+        return "data.xml"
 
     def __init__(self):
         pass
