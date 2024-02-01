@@ -7,7 +7,6 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from jinja2 import FileSystemLoader, Environment
 
-
 def initial(request):
     config = apps.get_app_config('core')
     config.load_plugins()
@@ -78,6 +77,7 @@ def get_current_workspace(request):
         response = {'search_param': config.selected_workspace.search_param,
                 'filter_params': config.selected_workspace.filter_params,
                 'root_node': config.selected_workspace.root_node}
+        print(config.selected_workspace.root_node)
     else:
         response = {}
     return JsonResponse(response)
@@ -100,8 +100,6 @@ def view(request):
     data_source_plugins = config.data_source_plugins
     visualizer_plugins = config.visualizer_plugins
 
-    config.update_workspace(search, filter_params)
-
     if not config.selected_workspace:
         return JsonResponse({"template": ""})
 
@@ -109,8 +107,9 @@ def view(request):
         graph = start_source_plugin(data_source_plugins, config.selected_workspace.data_source_id)
         html = run_visualisation_plugins(visualizer_plugins, visualizer_name, graph)
         tree_html = load_tree(graph)
+        bird_html = load_bird(graph)
+        return JsonResponse({"template": html, "tree": tree_html, "bird": bird_html})
 
-        return JsonResponse({"template": html, "tree": tree_html})
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({"template": ""})
@@ -125,17 +124,18 @@ def run_visualisation_plugins(visualisation_plugins, visualizer_name, graph):
     html = template.render(nodes=graph.nodes, edges=graph.edges)
     return html
 
-
 def start_source_plugin(source_plugins, source_id):
     for plugin in source_plugins:
         if plugin.id() == source_id:
             return plugin.load_data(get_path(plugin.file_name()))
 
-
-
 def load_tree(graph):
     template = get_template("tree.html")
     return template.render(nodes=graph.nodes, edges=graph.edges, relation=graph.edges[0].type)
+
+def load_bird(graph):
+    template = get_template("bird.html")
+    return template.render()
 
 def get_template(view):
     p = os.path.dirname(__file__)
@@ -143,7 +143,6 @@ def get_template(view):
     env = Environment(loader=FileSystemLoader(searchpath=path))
     template = env.get_template(view)
     return template
-
 
 def get_path(file_name):
     file_path = "core/core/static/" + file_name

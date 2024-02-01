@@ -106,7 +106,8 @@
         }
 
         function loadParams(search_param, filter_params) {
-            document.getElementById('search').value = search_param;
+            if (search_param)
+                document.getElementById('search').value = search_param;
 
             document.getElementById('filter').value = '';
             document.querySelector('.params').innerHTML = '';
@@ -239,6 +240,7 @@
                 data: formData,
                 success: function (response) {
                     $('.main').html(response.template);
+                    $('.bird-view').html(response.bird);
                     $('.tree-view').html(response.tree);
                     if (root_node)
                         createGraph(root_node);

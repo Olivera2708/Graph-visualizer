@@ -120,6 +120,9 @@
                 if ({{ edge.toNode.id }} == node_id){
                     ret.push({label: "{{ edge.fromNode.name }}" });
                 }
+                if ("{{ edge.directed }}" === "False" && {{ edge.fromNode.id }} == node_id){
+                    ret.push({label: "{{ edge.toNode.name }}" });
+                }
             {% endfor %}
             return ret;
         }
