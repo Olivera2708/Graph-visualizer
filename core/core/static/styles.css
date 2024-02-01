@@ -240,3 +240,11 @@ input {
     display: none;
 }
 
+#string-dropdown {
+    border-radius: 0.3rem;
+    background-color: #fae0c3;
+}
+
+#string-dropdown:active, #string-dropdown:hover, #string-dropdown:focus {
+    outline: none
+}

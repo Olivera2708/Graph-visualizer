@@ -125,6 +125,10 @@
                 url: "{% url 'workspaces' %}",
                 success: function(response) {
                     tabs = response.tabs;
+                    if (!tabs[0]) {
+                        loadDialog();
+                        return;
+                    }
                     for (let tab of tabs) {
                         const newTab = createTab(...tab);
                         document.querySelector('.tabs').appendChild(newTab);
@@ -201,31 +205,6 @@
             })
         }
 
-        function addWorkspace() {
-            var formData = $('#workspace_form').serializeArray();
-            formData.push({name: 'search_param', value: document.getElementById('search').value});
-            formData.push({name: 'filter_params', value: JSON.stringify(readFilterValues())});
-            root_node_name = localStorage.getItem('root_node_name');
-            formData.push({name: 'root_node', value: root_node_name});
-
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'new-workspace' %}",
-                data: formData,
-                success: function() {
-                    showTabs();
-                    document.getElementById('search').value = '';
-                    document.getElementById('filter').value = '';
-                    document.querySelector('.params').innerHTML = '';
-                    submitForm();
-                },
-                error: function(xhr, status, error) {
-                    console.error(error);
-                }
-            });
-        }
-
-
         function readFilterValues() {
             const filterParams = [];
             document.querySelector('.params').querySelectorAll('.param')
@@ -260,12 +239,6 @@
             });
         });
 
-
-
-        showTabs();
-
-
-
         function loadDialog() {
             $.ajax({
                 url: '{% url "source-plugins" %}',
@@ -295,14 +268,14 @@
                         $(this).dialog("close");
                     },
                     "OK": function() {
-                        newWorkspace();
+                        addWorkspace();
                         $(this).dialog("close");
                     }
                 }
             });
         }
 
-        function newWorkspace() {
+        function addWorkspace() {
             let data = {};
             data.search_param = document.getElementById('search').value;
             data.filter_params = JSON.stringify(readFilterValues());
@@ -333,6 +306,7 @@
             });
         });
 
+        showTabs();
 
     </script>
 </html>

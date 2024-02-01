@@ -52,6 +52,7 @@ def remove_workspace(request):
     config.remove_workspace(request.GET.get('name'))
     return HttpResponse()
 
+
 def select_workspace(request):
     config = apps.get_app_config('core')
 
