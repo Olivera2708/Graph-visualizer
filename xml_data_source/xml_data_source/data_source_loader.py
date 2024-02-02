@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+from datetime import datetime
 
 from core.core.models import Node, Graph, Edge
 from core.core.services.data_source_service import DataSourceService
@@ -39,9 +40,12 @@ class XMLDataSourceLoader(DataSourceService):
     def _load_node_attributes(self, node: Node, element: ET.Element):
         for child in element:
             if not child.text: continue
-            text = child.text.strip().replace('\n', '').strip()
+            text: str = child.text.strip().replace('\n', '').strip()
+            value: object = text
             if text:
-                node.add_attribute(child.tag, text)
+                if child.tag in ['birthday', 'memberSince']:
+                    value = datetime.strptime(text, '%Y-%m-%d').date()
+                node.add_attribute(child.tag, value)
             else:
                 self._load_node_attributes(node, child)
 
