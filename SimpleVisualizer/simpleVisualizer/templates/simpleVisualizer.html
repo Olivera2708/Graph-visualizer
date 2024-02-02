@@ -123,10 +123,15 @@
                 return d.directed === "True" ? 'link-directed' : 'link';
             });
 
-        var div = d3.select('body').append('div')
-            .attr('class', 'detailsDisplay')
-            .style('display', 'none')
-            .style('visibility', 'hidden');
+        var divCheck = d3.select('#divInfo');
+
+        if(divCheck.empty()){
+            var div = d3.select('body').append('div')
+                .attr('id', 'divInfo')
+                .attr('class', 'detailsDisplay')
+                .style('display', 'none')
+                .style('visibility', 'hidden');
+        }
 
         var node = svg.selectAll('.node')
             .data(force.nodes())
@@ -190,6 +195,14 @@
                     .style('display', 'none');
             })
             .call(force.drag);
+
+        d3.select('#svg-main').on('mouseover', function () {
+            var target = d3.select(d3.event.target);
+            if (target.node().nodeName !== 'rect' && target.node().nodeName !== 'text' && target.node().nodeName !== 'g') {
+                div.transition().style('visibility', 'hidden')
+                    .style('display', 'none');
+            }
+        })
 
         function wordwrap(str, width) {
             var regex = new RegExp('.{1,' + width + '}(\\s|$)|.{' + width + '}|.+$', 'g');
