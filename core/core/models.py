@@ -69,6 +69,11 @@ class Graph:
             string += edge.__str__() + "\n"
         return string
 
+    def remove_node(self, node: Node):
+        self.nodes.remove(node)
+
+    def remove_edge(self, edge: Edge):
+        self.edges.remove(edge)
 
 class Workspace:
     id = 1
