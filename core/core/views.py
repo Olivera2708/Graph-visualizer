@@ -15,6 +15,7 @@ def initial(request):
 
 
 def get_workspaces(request):
+
     config = apps.get_app_config('core')
     response = {'tabs': config.get_tabs()}
     return JsonResponse(response)
@@ -65,10 +66,12 @@ def select_workspace(request):
 
     config.update_workspace(search, filter_params, root_node)
 
+    print(config.selected_workspace.search_param)
     config.select_workspace(request.GET.get('name'))
     response = {'search_param': config.selected_workspace.search_param,
                 'filter_params': config.selected_workspace.filter_params,
                 'root_node': config.selected_workspace.root_node}
+    print(config.selected_workspace.search_param)
     return JsonResponse(response)
 
 
@@ -173,7 +176,7 @@ def search_graph(graph, search_query):
         for attribute in node.attributes:
             if (
                     search_query.upper() in attribute.name.upper() or
-                    search_query.upper() in attribute.value.upper()
+                    search_query.upper() in str(attribute.value).upper()
             ):
                 found = True
                 break

@@ -106,7 +106,7 @@
         }
 
         function loadParams(search_param, filter_params) {
-            if (search_param)
+            if (search_param || search_param === "")
                 document.getElementById('search').value = search_param;
 
             document.getElementById('filter').value = '';
