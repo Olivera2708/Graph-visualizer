@@ -1,5 +1,5 @@
-from core.models import Node, NodeAttribute, Graph, Edge
-from core.services.data_source_service import DataSourceService
+from api.models import Node, NodeAttribute, Graph, Edge
+from api.services.data_source_service import DataSourceService
 import json
 
 

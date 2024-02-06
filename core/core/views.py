@@ -24,7 +24,6 @@ def get_workspaces(request):
 def get_data_source_plugins(request):
     config = apps.get_app_config('core')
     ids = [plugin.id() for plugin in config.data_source_plugins]
-    print(ids)
     return JsonResponse({'plugins': ids})
 
 
@@ -43,8 +42,6 @@ def add_new_workspace(request):
     config.update_workspace(search, filter_params, root_node)
 
     config.add_workspace(data_source_id)
-
-    print([ws.name for ws in config.workspaces])
     return HttpResponse()
 
 
@@ -66,12 +63,10 @@ def select_workspace(request):
 
     config.update_workspace(search, filter_params, root_node)
 
-    print(config.selected_workspace.search_param)
     config.select_workspace(request.GET.get('name'))
     response = {'search_param': config.selected_workspace.search_param,
                 'filter_params': config.selected_workspace.filter_params,
                 'root_node': config.selected_workspace.root_node}
-    print(config.selected_workspace.search_param)
     return JsonResponse(response)
 
 
@@ -81,7 +76,6 @@ def get_current_workspace(request):
         response = {'search_param': config.selected_workspace.search_param,
                     'filter_params': config.selected_workspace.filter_params,
                     'root_node': config.selected_workspace.root_node}
-        print(config.selected_workspace.root_node)
     else:
         response = {}
     return JsonResponse(response)

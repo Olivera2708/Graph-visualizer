@@ -1,6 +1,6 @@
 import os
 from jinja2 import FileSystemLoader, Environment
-from core.services.visualization_service import VisualizationService
+from api.services.visualization_service import VisualizationService
 
 class BlockVisualizer(VisualizationService):
     def name(self):

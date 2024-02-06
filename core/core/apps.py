@@ -1,7 +1,7 @@
 import pkg_resources
 from django.apps import AppConfig
 
-from core.models import Workspace, Graph
+from core.models import Workspace
 
 
 class CoreConfig(AppConfig):
