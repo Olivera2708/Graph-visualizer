@@ -253,6 +253,9 @@
 
         $(document).ready(function() {
             $('#findButton').on('click', function() {
+                $('.main').html("");
+                $('.bird-view').html('');
+                $('.tree-view').html('');
                 submitForm();
             });
         });

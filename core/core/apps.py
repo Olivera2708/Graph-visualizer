@@ -1,6 +1,7 @@
 import pkg_resources
 from django.apps import AppConfig
 
+from api.models import Graph
 from core.models import Workspace
 
 
@@ -17,8 +18,8 @@ class CoreConfig(AppConfig):
         self.data_source_plugins = load_plugins_from_group("data_source")
         self.visualizer_plugins = load_plugins_from_group("visualizer")
 
-    def add_workspace(self, data_source_id: str):
-        workspace: Workspace = Workspace(data_source_id)
+    def add_workspace(self, data_source_id: str, graph: Graph=None):
+        workspace: Workspace = Workspace(data_source_id, graph)
         self.workspaces.append(workspace)
         self.selected_workspace = workspace
 

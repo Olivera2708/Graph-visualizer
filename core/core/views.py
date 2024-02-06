@@ -1,11 +1,14 @@
 import json
 import os
 import traceback
+from copy import copy, deepcopy
 
 from django.apps import apps
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from jinja2 import FileSystemLoader, Environment
+
+from api.models import Graph
 
 
 def initial(request):
@@ -31,6 +34,7 @@ def add_new_workspace(request):
     data_source_id = request.POST.get("data_source_id")
 
     config = apps.get_app_config('core')
+    data_plugins = config.data_source_plugins
 
     search = request.POST.get('search_param')
     filter_params_request = request.POST.get('filter_params')
@@ -41,7 +45,9 @@ def add_new_workspace(request):
 
     config.update_workspace(search, filter_params, root_node)
 
-    config.add_workspace(data_source_id)
+    graph = start_source_plugin(data_plugins, data_source_id)
+
+    config.add_workspace(data_source_id, graph)
     return HttpResponse()
 
 
@@ -95,14 +101,14 @@ def view(request):
         visualizer_name = "BlockVisualizer"
 
     config = apps.get_app_config('core')
-    data_source_plugins = config.data_source_plugins
     visualizer_plugins = config.visualizer_plugins
 
     if not config.selected_workspace:
         return JsonResponse({"template": ""})
 
     try:
-        graph = start_source_plugin(data_source_plugins, config.selected_workspace.data_source_id)
+        graph = deepcopy(config.selected_workspace.graph)
+
         search_graph(graph, search_query)
 
         html = run_visualisation_plugins(visualizer_plugins, visualizer_name, graph)
