@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'GraphVisualizer.GraphVisualizer.urls'
+ROOT_URLCONF = 'GraphVisualizer.urls'
 
 TEMPLATES = [
     {

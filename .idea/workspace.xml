@@ -5,8 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bb83a6bf-643c-431d-91f5-9055a64273b9" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/Graph-visualizer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Graph-visualizer.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/core/templates/tree.html" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/templates/tree.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BlockVisualizer/blockVisualizer/blockVisualizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/BlockVisualizer/blockVisualizer/blockVisualizer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphVisualizer/GraphVisualizer/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/GraphVisualizer/GraphVisualizer/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphVisualizer/GraphVisualizer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/GraphVisualizer/GraphVisualizer/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/simpleVisualizer/simpleVisualizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/SimpleVisualizer/simpleVisualizer/simpleVisualizer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/core/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/core/apps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source/data_source_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/json_data_source/json_data_source/data_source_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/xml_data_source/xml_data_source/data_source_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/xml_data_source/xml_data_source/data_source_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +52,7 @@
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "bugfix-feature-tree-view",
+    "git-widget-placeholder": "refactor-general",
     "last_opened_file_path": "/Users/olivera/Documents/Graph-visualizer/Graph-visualizer",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
@@ -132,7 +139,7 @@
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="SDK_NAME" value="Python 3.9 (Graph-visualizer)" />
-      <option name="WORKING_DIRECTORY" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/GraphVisualizer" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
@@ -268,5 +275,8 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Graph_visualizer$views.coverage" NAME="views Coverage Results" MODIFIED="1706715248217" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/core/core" />
   </component>
 </project>

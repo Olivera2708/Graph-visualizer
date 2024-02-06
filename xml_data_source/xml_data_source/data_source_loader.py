@@ -1,8 +1,8 @@
 import xml.etree.ElementTree as ET
 from datetime import datetime
 
-from core.core.models import Node, Graph, Edge
-from core.core.services.data_source_service import DataSourceService
+from core.models import Node, Graph, Edge
+from core.services.data_source_service import DataSourceService
 
 
 class XMLDataSourceLoader(DataSourceService):
