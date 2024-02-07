@@ -184,6 +184,7 @@
                 success: function (response) {
                   showTabs();
                   loadParams(response.search_param, response.filter_params);
+                  localStorage.setItem('root_node_name', response.root_node);
                   submitForm(response.root_node);
                 },
                 error: function(xhr, status, error) {
@@ -253,7 +254,7 @@
 
         $(document).ready(function() {
             $('#findButton').on('click', function() {
-                $('.main').html("");
+                $('.main').html('');
                 $('.bird-view').html('');
                 $('.tree-view').html('');
                 submitForm();
@@ -313,6 +314,7 @@
                     document.getElementById('search').value = '';
                     document.getElementById('filter').value = '';
                     document.querySelector('.params').innerHTML = '';
+                    localStorage.setItem('root_node_name', '');
                     submitForm();
                 },
                 error: function(xhr, status, error) {
