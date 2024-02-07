@@ -1,7 +1,9 @@
 import json
 import os
+import re
 import traceback
 from copy import copy, deepcopy
+from datetime import datetime, date
 
 from django.apps import apps
 from django.http import JsonResponse, HttpResponse
@@ -18,7 +20,6 @@ def initial(request):
 
 
 def get_workspaces(request):
-
     config = apps.get_app_config('core')
     response = {'tabs': config.get_tabs()}
     return JsonResponse(response)
@@ -110,7 +111,10 @@ def view(request):
         graph = deepcopy(config.selected_workspace.graph)
 
         search_graph(graph, search_query)
-
+        messages = filter_graph(graph, filter_params)
+        for message in messages:
+            print(message)
+        print(len(graph.nodes))
         html = run_visualisation_plugins(visualizer_plugins, visualizer_name, graph)
         tree_html = load_tree(graph)
         bird_html = load_bird(graph)
@@ -167,7 +171,8 @@ def get_path(file_name):
 
 
 def search_graph(graph, search_query):
-    if search_query == "": return
+    if search_query == "":
+        return
     removed_nodes = []
     for node in graph.nodes:
         if search_query.upper() in node.name.upper():
@@ -180,20 +185,106 @@ def search_graph(graph, search_query):
             ):
                 found = True
                 break
-        if found: continue
+        if found:
+            continue
         removed_nodes.append(node)
 
-    if len(removed_nodes) == 0:
-        return
+    if len(removed_nodes) > 0:
+        remove_nodes(graph, removed_nodes)
 
+
+def remove_nodes(graph, nodes):
     removed_edges = []
 
     for edge in graph.edges:
-        if edge.fromNode in removed_nodes or edge.toNode in removed_nodes:
+        if edge.fromNode in nodes or edge.toNode in nodes:
             removed_edges.append(edge)
 
     for edge in removed_edges:
         graph.remove_edge(edge)
 
-    for node in removed_nodes:
+    for node in nodes:
         graph.remove_node(node)
+
+
+def filter_graph(graph, filter_params):
+    messages = []
+    removed_nodes = []
+    no_attribute_nodes = []
+    for filter_param in filter_params:
+        name_expression, operator, value_expression = extract_tokens(filter_param)
+
+        found_attribute_in_graph = False
+        for node in graph.nodes:
+            found_attribute_in_node = False
+            for attribute in node.attributes:
+                if attribute.name.lower().strip() != name_expression:
+                    continue
+                print(type(attribute.value).__name__)
+                found_attribute_in_node = True
+                found_attribute_in_graph = True
+                parsed_value, adapted_value, message = parse_by_type(value_expression, attribute.value)
+                if message is not None:
+                    messages.append(message)
+                    continue
+                if not compare(adapted_value, operator, parsed_value) and node not in removed_nodes:
+                    removed_nodes.append(node)
+                break
+            if not found_attribute_in_node:
+                no_attribute_nodes.append(node)
+        if not found_attribute_in_graph:
+            messages.append(f"No such attribute as {name_expression}")
+        else:
+            for node in no_attribute_nodes:
+                if node not in removed_nodes:
+                    removed_nodes.append(node)
+        no_attribute_nodes.clear()
+
+    if len(removed_nodes) > 0:
+        remove_nodes(graph, removed_nodes)
+    return messages
+
+
+def extract_tokens(filter_param):
+    expression_regex = r'^\s*([\w\d\s,.\-()]+)\s*(==|>|>=|<|<=|!=)\s*([\w\d\s,.\-()]+)\s*$'
+    match = re.match(expression_regex, filter_param)
+    name_expression = match.group(1).strip()
+    operator = match.group(2).strip()
+    value_expression = match.group(3).strip()
+    return name_expression.lower().strip(), operator.strip(), value_expression.lower().strip()
+
+
+def parse_by_type(value_expression, value_of_type):
+    parsed_value = None
+    adapted_value = value_of_type
+    message = None
+    try:
+        if isinstance(value_of_type, date):
+            parsed_value = datetime.strptime(value_expression, "%Y-%m-%d").date()
+        elif isinstance(value_of_type, int):
+            parsed_value = int(value_expression)
+        elif isinstance(value_of_type, float):
+            parsed_value = float(value_expression)
+        elif isinstance(value_of_type, str):
+            parsed_value = value_expression
+            adapted_value = value_of_type.lower().strip()
+    except Exception as e:
+        message = f"{value_expression} cannot be interpreted as {type(value_of_type).__name__}"
+    finally:
+        return parsed_value, adapted_value, message
+
+
+def compare(attribute_value, operator, value_expression):
+    if operator == "==":
+        return attribute_value == value_expression
+    elif operator == ">":
+        return attribute_value > value_expression
+    elif operator == ">=":
+        return attribute_value >= value_expression
+    elif operator == "<":
+        return attribute_value < value_expression
+    elif operator == "<=":
+        return attribute_value <= value_expression
+    elif operator == "!=":
+        return attribute_value != value_expression
+    return False

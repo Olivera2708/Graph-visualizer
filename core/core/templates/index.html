@@ -98,11 +98,16 @@
 
         function addFilter() {
             const filterValue = document.getElementById('filter').value.trim();
-            if (filterValue !== "") {
+            if (isValid(filterValue)) {
                 const newParam = createParam(filterValue);
                 document.querySelector('.params').appendChild(newParam);
                 document.getElementById('filter').value = '';
             }
+        }
+
+        function isValid(filterValue) {
+            const expressionRegex = /^\s*[\w\d\s,.\-()]+\s*(==|>|>=|<|<=|!=)\s*[\w\d\s,.\-()]+\s*$/;
+            return expressionRegex.test(filterValue);
         }
 
         function loadParams(search_param, filter_params) {
