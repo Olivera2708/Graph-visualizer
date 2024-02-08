@@ -1,6 +1,6 @@
 import os
 from jinja2 import FileSystemLoader, Environment
-from core.core.services.visualization_service import VisualizationService
+from api.services.visualization_service import VisualizationService
 
 class SimpleVisualizer(VisualizationService):
 
@@ -8,10 +8,7 @@ class SimpleVisualizer(VisualizationService):
         return "SimpleVisualizer"
 
     def id(self):
-        pass
-
-    def visualize_graph(request):
-        pass
+        return 'simple'
 
     def load(self):
         p = os.path.dirname(__file__)

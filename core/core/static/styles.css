@@ -103,7 +103,6 @@ input {
 
 .params {
     white-space: nowrap;
-    /*margin: 0.5rem 0 0.5rem 0;*/
     display: flex;
     flex-wrap: wrap;
 }
@@ -240,11 +239,15 @@ input {
     display: none;
 }
 
-#string-dropdown {
+.dropdown {
     border-radius: 0.3rem;
     background-color: #fae0c3;
 }
 
-#string-dropdown:active, #string-dropdown:hover, #string-dropdown:focus {
+.dropdown:active, .dropdown:hover, .dropdown:focus {
     outline: none
+}
+
+#visualization-dropdown {
+    margin-right: 0.8rem;
 }

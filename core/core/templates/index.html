@@ -39,10 +39,7 @@
                 <form id="myForm" method="post" action="{% url 'view' %}">
                     {% csrf_token %}
                     <div class="file-search">
-                        <div>
-                            <input class="tgl tgl-skewed" id="visualizer" name="visualizer" type="checkbox"/>
-                            <label class="tgl-btn" data-tg-off="simple" data-tg-on="block" for="visualizer"></label>
-                        </div>
+                        <select id="visualization-dropdown" class="form-control dropdown"></select>
                         <div>
                             <label for="search">Search:</label>
                             <input id="search" name="search" type="text">
@@ -68,7 +65,7 @@
         </div>
 
         <div id="dialog" title="Which data-source do you wish to use?">
-            <select id="string-dropdown" class="form-control"></select>
+            <select id="data-source-dropdown" class="form-control dropdown"></select>
         </div>
 
 
@@ -184,6 +181,7 @@
                 success: function (response) {
                   showTabs();
                   loadParams(response.search_param, response.filter_params);
+                  localStorage.setItem('root_node_name', response.root_node);
                   submitForm(response.root_node);
                 },
                 error: function(xhr, status, error) {
@@ -198,6 +196,7 @@
                 url: "{% url 'get-workspace' %}",
                 success: function (response) {
                   showTabs();
+                  getVisualisationOptions();
                   loadParams(response.search_param, response.filter_params);
                   submitForm(response.root_node);
                 },
@@ -233,6 +232,7 @@
         function submitForm(root_node = '') {
             var formData = $('#myForm').serializeArray();
             formData.push({name: 'filter_params', value: JSON.stringify(readFilterValues())});
+            formData.push({name: 'visualizer', value: $('#visualization-dropdown').val()});
 
             $.ajax({
                 type: 'POST',
@@ -253,24 +253,44 @@
 
         $(document).ready(function() {
             $('#findButton').on('click', function() {
+                $('.main').html('');
+                $('.bird-view').html('');
+                $('.tree-view').html('');
                 submitForm();
             });
         });
+
+        function getVisualisationOptions() {
+            $.ajax({
+                url: '{% url "visualization-options" %}',
+                type: 'GET',
+                success: function(response) {
+                    var dropdown = $('#visualization-dropdown');
+                    dropdown.empty();
+                    $.each(response.options, function(index, value) {
+                        dropdown.append($('<option>').text(value).attr('value', value));
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
 
         function loadDialog() {
             $.ajax({
                 url: '{% url "source-plugins" %}',
                 type: 'GET',
                 success: function(response) {
-                    var dropdown = $('#string-dropdown');
+                    var dropdown = $('#data-source-dropdown');
                     dropdown.empty();
                     $.each(response.plugins, function(index, value) {
                         dropdown.append($('<option>').text(value).attr('value', value));
                     });
                     createDialog();
                 },
-                error: function(xhr, errmsg, err) {
-                    console.log(xhr.responseText);
+                error: function (xhr, status, error) {
+                    console.error(error);
                 }
             });
         }
@@ -298,7 +318,7 @@
             data.search_param = document.getElementById('search').value;
             data.filter_params = JSON.stringify(readFilterValues());
             data.root_node = localStorage.getItem('root_node_name');
-            data.data_source_id = $('#string-dropdown').val();
+            data.data_source_id = $('#data-source-dropdown').val();
             data.csrfmiddlewaretoken = '{{ csrf_token }}'
 
             $.ajax({
@@ -310,6 +330,7 @@
                     document.getElementById('search').value = '';
                     document.getElementById('filter').value = '';
                     document.querySelector('.params').innerHTML = '';
+                    localStorage.setItem('root_node_name', '');
                     submitForm();
                 },
                 error: function(xhr, status, error) {

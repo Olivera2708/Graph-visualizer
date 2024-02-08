@@ -1,16 +1,13 @@
 import os
 from jinja2 import FileSystemLoader, Environment
-from core.core.services.visualization_service import VisualizationService
+from api.services.visualization_service import VisualizationService
 
 class BlockVisualizer(VisualizationService):
     def name(self):
         return "BlockVisualizer"
 
     def id(self):
-        pass
-
-    def visualize_graph(self):
-        pass
+        return 'block'
 
     def load(self):
         p = os.path.dirname(__file__)

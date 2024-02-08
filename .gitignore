@@ -5,7 +5,7 @@ __pycache__/
 .idea/
 
 # Ignore specific directories
-GraphVisualizer/__pycache__/
+GraphVisualizer/GraphVisualizer/__pycache__/
 core/core/__pycache__/
 
 # Python virtual environment

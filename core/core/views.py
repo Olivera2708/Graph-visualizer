@@ -1,6 +1,7 @@
 import json
 import os
 import traceback
+from copy import deepcopy
 
 from django.apps import apps
 from django.http import JsonResponse, HttpResponse
@@ -15,7 +16,6 @@ def initial(request):
 
 
 def get_workspaces(request):
-
     config = apps.get_app_config('core')
     response = {'tabs': config.get_tabs()}
     return JsonResponse(response)
@@ -24,14 +24,19 @@ def get_workspaces(request):
 def get_data_source_plugins(request):
     config = apps.get_app_config('core')
     ids = [plugin.id() for plugin in config.data_source_plugins]
-    print(ids)
     return JsonResponse({'plugins': ids})
+
+def get_visualization_options(request):
+    config = apps.get_app_config('core')
+    ids = [plugin.id() for plugin in config.visualizer_plugins]
+    return JsonResponse({'options': ids})
 
 
 def add_new_workspace(request):
     data_source_id = request.POST.get("data_source_id")
 
     config = apps.get_app_config('core')
+    data_plugins = config.data_source_plugins
 
     search = request.POST.get('search_param')
     filter_params_request = request.POST.get('filter_params')
@@ -42,9 +47,9 @@ def add_new_workspace(request):
 
     config.update_workspace(search, filter_params, root_node)
 
-    config.add_workspace(data_source_id)
+    graph = start_source_plugin(data_plugins, data_source_id)
 
-    print([ws.name for ws in config.workspaces])
+    config.add_workspace(data_source_id, graph)
     return HttpResponse()
 
 
@@ -66,12 +71,10 @@ def select_workspace(request):
 
     config.update_workspace(search, filter_params, root_node)
 
-    print(config.selected_workspace.search_param)
     config.select_workspace(request.GET.get('name'))
     response = {'search_param': config.selected_workspace.search_param,
                 'filter_params': config.selected_workspace.filter_params,
                 'root_node': config.selected_workspace.root_node}
-    print(config.selected_workspace.search_param)
     return JsonResponse(response)
 
 
@@ -81,7 +84,6 @@ def get_current_workspace(request):
         response = {'search_param': config.selected_workspace.search_param,
                     'filter_params': config.selected_workspace.filter_params,
                     'root_node': config.selected_workspace.root_node}
-        print(config.selected_workspace.root_node)
     else:
         response = {}
     return JsonResponse(response)
@@ -89,29 +91,24 @@ def get_current_workspace(request):
 
 def view(request):
     search_query = request.POST.get('search').strip()
-    visualizer = request.POST.get("visualizer")
+    visualizer_id = request.POST.get("visualizer")
     filter_params_request = request.POST.get('filter_params')
     filter_params = None
     if filter_params_request:
         filter_params = json.loads(request.POST.get('filter_params'))
 
-    if visualizer is None:
-        visualizer_name = "SimpleVisualizer"
-    else:
-        visualizer_name = "BlockVisualizer"
-
     config = apps.get_app_config('core')
-    data_source_plugins = config.data_source_plugins
     visualizer_plugins = config.visualizer_plugins
 
     if not config.selected_workspace:
         return JsonResponse({"template": ""})
 
     try:
-        graph = start_source_plugin(data_source_plugins, config.selected_workspace.data_source_id)
+        graph = deepcopy(config.selected_workspace.graph)
+
         search_graph(graph, search_query)
 
-        html = run_visualisation_plugins(visualizer_plugins, visualizer_name, graph)
+        html = run_visualisation_plugins(visualizer_plugins, visualizer_id, graph)
         tree_html = load_tree(graph)
         bird_html = load_bird(graph)
         return JsonResponse({"template": html, "tree": tree_html, "bird": bird_html})
@@ -121,11 +118,11 @@ def view(request):
         return JsonResponse({"template": ""})
 
 
-def run_visualisation_plugins(visualisation_plugins, visualizer_name, graph):
+def run_visualisation_plugins(visualisation_plugins, visualizer_id, graph):
     global template
     template = None
     for plugin in visualisation_plugins:
-        if plugin.name() == visualizer_name:
+        if plugin.id() == visualizer_id:
             template = plugin.load()
     html = template.render(nodes=graph.nodes, edges=graph.edges)
     return html
