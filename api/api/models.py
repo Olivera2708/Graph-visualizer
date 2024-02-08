@@ -22,7 +22,7 @@ class Node:
         self.id = Node.id
         Node.id += 1
 
-    def add_attribute(self, name: str, value: object):
+    def add_attribute(self, name: str, value: object) -> None:
         self.attributes.append(NodeAttribute(name, value))
 
     def __str__(self):
@@ -55,10 +55,10 @@ class Graph:
         self.nodes = []
         self.edges = []
 
-    def add_node(self, node: Node):
+    def add_node(self, node: Node) -> None:
         self.nodes.append(node)
 
-    def add_edge(self, edge: Edge):
+    def add_edge(self, edge: Edge) -> None:
         self.edges.append(edge)
 
     def __str__(self):
@@ -69,10 +69,10 @@ class Graph:
             string += edge.__str__() + "\n"
         return string
 
-    def remove_node(self, node: Node):
+    def remove_node(self, node: Node) -> None:
         self.nodes.remove(node)
 
-    def remove_edge(self, edge: Edge):
+    def remove_edge(self, edge: Edge) -> None:
         self.edges.remove(edge)
 
 

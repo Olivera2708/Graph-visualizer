@@ -3,13 +3,13 @@ from abc import ABC, abstractmethod
 class VisualizationService(ABC):
 
     @abstractmethod
-    def load(self):
+    def load(self) -> str:
         pass
 
     @abstractmethod
-    def name(self):
+    def name(self) -> str:
         pass
 
     @abstractmethod
-    def id(self):
+    def id(self) -> str:
         pass
