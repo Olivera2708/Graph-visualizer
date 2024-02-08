@@ -7,7 +7,7 @@ setup(
     package_data={'blockVisualizer': ['templates/*.html']},
     entry_points={
         'visualizer':
-            ['load_json=blockVisualizer.blockVisualizer:BlockVisualizer'],
+            ['block_visualizer=blockVisualizer.blockVisualizer:BlockVisualizer'],
     },
     zip_safe=False
 )
