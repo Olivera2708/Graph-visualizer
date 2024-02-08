@@ -52,6 +52,7 @@
                         <button type="button" class="action" id="findButton">Find</button>
 <!--                        <button type="submit" class="action">Find</button>-->
                     </div>
+
                 </form>
 
                 <div class="params">
@@ -61,6 +62,12 @@
 <!--                {% block mainView %}-->
 <!--                {% autoescape off %}{{ response.template }}{% endautoescape %}-->
 <!--                {% endblock %}-->
+            </div>
+            <div class="error-container" id="error-container">
+                <label class="error" id="error"></label>
+                <button onclick="hideError()" class="btn error-btn">
+                    <i class="fa fa-close"></i>
+                </button>
             </div>
         </div>
 
@@ -95,16 +102,47 @@
 
         function addFilter() {
             const filterValue = document.getElementById('filter').value.trim();
-            if (isValid(filterValue)) {
-                const newParam = createParam(filterValue);
-                document.querySelector('.params').appendChild(newParam);
-                document.getElementById('filter').value = '';
+            const expressionRegex = /^\s*[\w\d\s,.\-()]+\s*(==|>|>=|<|<=|!=)\s*[\w\d\s,.\-()]+\s*$/;
+            if (!expressionRegex.test(filterValue)) {
+                showError("Required format for filter: 'expression operator expression'."
+                +"\n Expressions may contain: letters|numbers|spaces|.|,|(|)|-|_"
+                +"\n Allowed operators: ==,!=,<,>,<=,>=");
+                return
             }
+
+                console.log()
+            let data = {}
+            data.filter_value = filterValue
+            data.csrfmiddlewaretoken = '{{ csrf_token }}'
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'check-filter' %}",
+                data: data,
+                success: function(response) {
+                    if (response.is_valid) {
+                        const newParam = createParam(filterValue);
+                        document.querySelector('.params').appendChild(newParam);
+                        hideError()
+                    }
+                    else {
+                        showError(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error occurred while checking validity:', error);
+                }
+            });
         }
 
-        function isValid(filterValue) {
-            const expressionRegex = /^\s*[\w\d\s,.\-()]+\s*(==|>|>=|<|<=|!=)\s*[\w\d\s,.\-()]+\s*$/;
-            return expressionRegex.test(filterValue);
+        function hideError() {
+            document.getElementById('error').innerText = "";
+            document.getElementById('error-container').style.visibility = 'hidden';
+        }
+
+        function showError(message) {
+            document.getElementById('error').innerText = message;
+            document.getElementById('error-container').style.visibility = 'visible';
         }
 
         function loadParams(search_param, filter_params) {
@@ -235,6 +273,7 @@
         }
 
         function submitForm(root_node = '') {
+            hideError();
             var formData = $('#myForm').serializeArray();
             formData.push({name: 'filter_params', value: JSON.stringify(readFilterValues())});
             formData.push({name: 'visualizer', value: $('#visualization-dropdown').val()});

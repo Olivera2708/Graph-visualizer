@@ -251,3 +251,28 @@ input {
 #visualization-dropdown {
     margin-right: 0.8rem;
 }
+
+.error {
+    font-weight: bold;
+    color: #af0000;
+    margin-right: 10px;
+}
+
+.error-btn:hover{
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.error-container {
+    visibility: hidden;
+    background-color: #fae0c3;
+    margin: 10px;
+    border: 2px solid black;
+    position: fixed;
+    z-index: 9999;
+    display: flex;
+    border-radius: 20px;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+}

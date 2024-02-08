@@ -90,6 +90,12 @@ def get_current_workspace(request):
         response = {}
     return JsonResponse(response)
 
+def check_filter(request):
+    is_valid, message = validate_filter(request.POST.get('filter_value'))
+    response = {'is_valid': is_valid,
+                'message': message}
+    return JsonResponse(response)
+
 
 def view(request):
     search_query = request.POST.get('search').strip()
@@ -109,9 +115,7 @@ def view(request):
         graph = deepcopy(config.selected_workspace.graph)
 
         search_graph(graph, search_query)
-        messages = filter_graph(graph, filter_params)
-        for message in messages:
-            print(message)
+        filter_graph(graph, filter_params)
         print(len(graph.nodes))
         html = run_visualisation_plugins(visualizer_plugins, visualizer_id, graph)
         tree_html = load_tree(graph)
@@ -205,42 +209,54 @@ def remove_nodes(graph, nodes):
         graph.remove_node(node)
 
 
+def validate_filter(filter_param):
+    message = ""
+    is_valid = True
+    graph = apps.get_app_config('core').selected_workspace.graph
+    name_expression, _, value_expression = extract_tokens(filter_param)
+    found_attribute_in_graph = False
+
+    for node in graph.nodes:
+        for attribute in node.attributes:
+            if attribute.name.lower().strip() != name_expression:
+                continue
+            found_attribute_in_graph = True
+            _, _, error = parse_by_type(value_expression, attribute.value)
+            if error is not None:
+                return False, error
+
+    if not found_attribute_in_graph:
+        is_valid = False
+        message = f"No such attribute as '{name_expression}'."
+
+    return is_valid, message
+
 def filter_graph(graph, filter_params):
-    messages = []
     removed_nodes = []
     no_attribute_nodes = []
     for filter_param in filter_params:
         name_expression, operator, value_expression = extract_tokens(filter_param)
 
-        found_attribute_in_graph = False
         for node in graph.nodes:
             found_attribute_in_node = False
             for attribute in node.attributes:
                 if attribute.name.lower().strip() != name_expression:
                     continue
-                print(type(attribute.value).__name__)
                 found_attribute_in_node = True
-                found_attribute_in_graph = True
-                parsed_value, adapted_value, message = parse_by_type(value_expression, attribute.value)
-                if message is not None:
-                    messages.append(message)
-                    continue
+                parsed_value, adapted_value, _ = parse_by_type(value_expression, attribute.value)
                 if not compare(adapted_value, operator, parsed_value) and node not in removed_nodes:
                     removed_nodes.append(node)
                 break
             if not found_attribute_in_node:
                 no_attribute_nodes.append(node)
-        if not found_attribute_in_graph:
-            messages.append(f"No such attribute as {name_expression}")
-        else:
-            for node in no_attribute_nodes:
-                if node not in removed_nodes:
-                    removed_nodes.append(node)
+
+        for node in no_attribute_nodes:
+            if node not in removed_nodes:
+                removed_nodes.append(node)
         no_attribute_nodes.clear()
 
     if len(removed_nodes) > 0:
         remove_nodes(graph, removed_nodes)
-    return messages
 
 
 def extract_tokens(filter_param):
@@ -255,7 +271,7 @@ def extract_tokens(filter_param):
 def parse_by_type(value_expression, value_of_type):
     parsed_value = None
     adapted_value = value_of_type
-    message = None
+    error = None
     try:
         if isinstance(value_of_type, date):
             parsed_value = datetime.strptime(value_expression, "%Y-%m-%d").date()
@@ -267,9 +283,9 @@ def parse_by_type(value_expression, value_of_type):
             parsed_value = value_expression
             adapted_value = value_of_type.lower().strip()
     except Exception as e:
-        message = f"{value_expression} cannot be interpreted as {type(value_of_type).__name__}"
+        error = f"Value '{value_expression}' cannot be converted into type '{type(value_of_type).__name__}'."
     finally:
-        return parsed_value, adapted_value, message
+        return parsed_value, adapted_value, error
 
 
 def compare(attribute_value, operator, value_expression):
