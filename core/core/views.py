@@ -1,6 +1,8 @@
 import json
 import os
+import re
 import traceback
+from datetime import datetime, date
 from copy import deepcopy
 
 from django.apps import apps
@@ -88,6 +90,12 @@ def get_current_workspace(request):
         response = {}
     return JsonResponse(response)
 
+def check_filter(request):
+    is_valid, message = validate_filter(request.POST.get('filter_value'))
+    response = {'is_valid': is_valid,
+                'message': message}
+    return JsonResponse(response)
+
 
 def view(request):
     search_query = request.POST.get('search').strip()
@@ -107,7 +115,8 @@ def view(request):
         graph = deepcopy(config.selected_workspace.graph)
 
         search_graph(graph, search_query)
-
+        filter_graph(graph, filter_params)
+        print(len(graph.nodes))
         html = run_visualisation_plugins(visualizer_plugins, visualizer_id, graph)
         tree_html = load_tree(graph)
         bird_html = load_bird(graph)
@@ -164,7 +173,8 @@ def get_path(file_name):
 
 
 def search_graph(graph, search_query):
-    if search_query == "": return
+    if search_query == "":
+        return
     removed_nodes = []
     for node in graph.nodes:
         if search_query.upper() in node.name.upper():
@@ -177,20 +187,118 @@ def search_graph(graph, search_query):
             ):
                 found = True
                 break
-        if found: continue
+        if found:
+            continue
         removed_nodes.append(node)
 
-    if len(removed_nodes) == 0:
-        return
+    if len(removed_nodes) > 0:
+        remove_nodes(graph, removed_nodes)
 
+
+def remove_nodes(graph, nodes):
     removed_edges = []
 
     for edge in graph.edges:
-        if edge.fromNode in removed_nodes or edge.toNode in removed_nodes:
+        if edge.fromNode in nodes or edge.toNode in nodes:
             removed_edges.append(edge)
 
     for edge in removed_edges:
         graph.remove_edge(edge)
 
-    for node in removed_nodes:
+    for node in nodes:
         graph.remove_node(node)
+
+
+def validate_filter(filter_param):
+    message = ""
+    is_valid = True
+    graph = apps.get_app_config('core').selected_workspace.graph
+    name_expression, _, value_expression = extract_tokens(filter_param)
+    found_attribute_in_graph = False
+
+    for node in graph.nodes:
+        for attribute in node.attributes:
+            if attribute.name.lower().strip() != name_expression:
+                continue
+            found_attribute_in_graph = True
+            _, _, error = parse_by_type(value_expression, attribute.value)
+            if error is not None:
+                return False, error
+
+    if not found_attribute_in_graph:
+        is_valid = False
+        message = f"No such attribute as '{name_expression}'."
+
+    return is_valid, message
+
+def filter_graph(graph, filter_params):
+    removed_nodes = []
+    no_attribute_nodes = []
+    for filter_param in filter_params:
+        name_expression, operator, value_expression = extract_tokens(filter_param)
+
+        for node in graph.nodes:
+            found_attribute_in_node = False
+            for attribute in node.attributes:
+                if attribute.name.lower().strip() != name_expression:
+                    continue
+                found_attribute_in_node = True
+                parsed_value, adapted_value, _ = parse_by_type(value_expression, attribute.value)
+                if not compare(adapted_value, operator, parsed_value) and node not in removed_nodes:
+                    removed_nodes.append(node)
+                break
+            if not found_attribute_in_node:
+                no_attribute_nodes.append(node)
+
+        for node in no_attribute_nodes:
+            if node not in removed_nodes:
+                removed_nodes.append(node)
+        no_attribute_nodes.clear()
+
+    if len(removed_nodes) > 0:
+        remove_nodes(graph, removed_nodes)
+
+
+def extract_tokens(filter_param):
+    expression_regex = r'^\s*([\w\d\s,.\-()]+)\s*(==|>|>=|<|<=|!=)\s*([\w\d\s,.\-()]+)\s*$'
+    match = re.match(expression_regex, filter_param)
+    name_expression = match.group(1).strip()
+    operator = match.group(2).strip()
+    value_expression = match.group(3).strip()
+    return name_expression.lower().strip(), operator.strip(), value_expression.lower().strip()
+
+
+def parse_by_type(value_expression, value_of_type):
+    parsed_value = None
+    adapted_value = value_of_type
+    error = None
+    try:
+        if isinstance(value_of_type, date):
+            parsed_value = datetime.strptime(value_expression, "%Y-%m-%d").date()
+        elif isinstance(value_of_type, int):
+            parsed_value = int(value_expression)
+        elif isinstance(value_of_type, float):
+            parsed_value = float(value_expression)
+        elif isinstance(value_of_type, str):
+            parsed_value = value_expression
+            adapted_value = value_of_type.lower().strip()
+    except Exception as e:
+        error = f"Value '{value_expression}' cannot be converted into type '{type(value_of_type).__name__}'."
+    finally:
+        return parsed_value, adapted_value, error
+
+
+def compare(attribute_value, operator, value_expression):
+    if operator == "==":
+        return attribute_value == value_expression
+    elif operator == ">":
+        return attribute_value > value_expression
+    elif operator == ">=":
+        return attribute_value >= value_expression
+    elif operator == "<":
+        return attribute_value < value_expression
+    elif operator == "<=":
+        return attribute_value <= value_expression
+    elif operator == "!=":
+        return attribute_value != value_expression
+    return False
