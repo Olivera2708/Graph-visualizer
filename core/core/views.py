@@ -1,14 +1,12 @@
 import json
 import os
 import traceback
-from copy import copy, deepcopy
+from copy import deepcopy
 
 from django.apps import apps
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from jinja2 import FileSystemLoader, Environment
-
-from api.models import Graph
 
 
 def initial(request):
@@ -18,7 +16,6 @@ def initial(request):
 
 
 def get_workspaces(request):
-
     config = apps.get_app_config('core')
     response = {'tabs': config.get_tabs()}
     return JsonResponse(response)
@@ -28,6 +25,11 @@ def get_data_source_plugins(request):
     config = apps.get_app_config('core')
     ids = [plugin.id() for plugin in config.data_source_plugins]
     return JsonResponse({'plugins': ids})
+
+def get_visualization_options(request):
+    config = apps.get_app_config('core')
+    ids = [plugin.id() for plugin in config.visualizer_plugins]
+    return JsonResponse({'options': ids})
 
 
 def add_new_workspace(request):
@@ -89,16 +91,11 @@ def get_current_workspace(request):
 
 def view(request):
     search_query = request.POST.get('search').strip()
-    visualizer = request.POST.get("visualizer")
+    visualizer_id = request.POST.get("visualizer")
     filter_params_request = request.POST.get('filter_params')
     filter_params = None
     if filter_params_request:
         filter_params = json.loads(request.POST.get('filter_params'))
-
-    if visualizer is None:
-        visualizer_name = "SimpleVisualizer"
-    else:
-        visualizer_name = "BlockVisualizer"
 
     config = apps.get_app_config('core')
     visualizer_plugins = config.visualizer_plugins
@@ -111,7 +108,7 @@ def view(request):
 
         search_graph(graph, search_query)
 
-        html = run_visualisation_plugins(visualizer_plugins, visualizer_name, graph)
+        html = run_visualisation_plugins(visualizer_plugins, visualizer_id, graph)
         tree_html = load_tree(graph)
         bird_html = load_bird(graph)
         return JsonResponse({"template": html, "tree": tree_html, "bird": bird_html})
@@ -121,11 +118,11 @@ def view(request):
         return JsonResponse({"template": ""})
 
 
-def run_visualisation_plugins(visualisation_plugins, visualizer_name, graph):
+def run_visualisation_plugins(visualisation_plugins, visualizer_id, graph):
     global template
     template = None
     for plugin in visualisation_plugins:
-        if plugin.name() == visualizer_name:
+        if plugin.id() == visualizer_id:
             template = plugin.load()
     html = template.render(nodes=graph.nodes, edges=graph.edges)
     return html

@@ -7,7 +7,7 @@ setup(
     package_data={'simpleVisualizer': ['templates/*.html']},
     entry_points={
         'visualizer':
-            ['load_json=simpleVisualizer.simpleVisualizer:SimpleVisualizer'],
+            ['simple_visualizer=simpleVisualizer.simpleVisualizer:SimpleVisualizer'],
     },
     zip_safe=False
 )

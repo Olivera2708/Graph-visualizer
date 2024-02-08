@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 class VisualizationService(ABC):
 
     @abstractmethod
-    def visualize_graph(self):
+    def load(self):
         pass
 
     @abstractmethod

@@ -8,10 +8,7 @@ class SimpleVisualizer(VisualizationService):
         return "SimpleVisualizer"
 
     def id(self):
-        pass
-
-    def visualize_graph(request):
-        pass
+        return 'simple'
 
     def load(self):
         p = os.path.dirname(__file__)
