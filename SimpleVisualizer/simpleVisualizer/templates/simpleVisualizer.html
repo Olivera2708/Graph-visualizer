@@ -97,8 +97,8 @@
             .nodes(d3.values(nodes))
             .links(edges)
             .on("tick", tick)
-            .linkDistance(300)
-            .charge(-100)
+            .linkDistance(400)
+            .charge(-300)
             .start();
 
         var zoom = d3.behavior.zoom()
@@ -107,9 +107,6 @@
                     return;
                 }
                 svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
-
-                let zoomEvent = new CustomEvent('mainZoom');
-                document.dispatchEvent(zoomEvent);
             });
 
         var svg = d3.select('#svg-main')
