@@ -147,7 +147,6 @@
                     selectedId = "node_{{ node.id }}";
                     selectedName = "{{ node.name }}";
                     paintNode(selectedId);
-                    paintTreeNode(selectedName);
                     const new_node = {label: "{{ node.name }}"};
                     let attributes = [];
                     {% for attr in node.attributes %}
@@ -159,6 +158,7 @@
                 }
             {% endfor %}
             buildTree(parentElement, treeData, root);
+            paintTreeNode(selectedName);
         }
 
         function getChildren(node_id) {
