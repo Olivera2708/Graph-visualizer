@@ -22,6 +22,4 @@ cd BlockVisualizer
 python setup.py install
 cd ..
 
-python manage.py makemigrations
-python manage.py migrate
 python GraphVisualizer/manage.py runserver
