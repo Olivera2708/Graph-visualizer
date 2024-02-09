@@ -1,0 +1,262 @@
+{% block style %}
+<style>
+    #treeview {
+        width: 23vw;
+        height: 48vh;
+        overflow: auto;
+    }
+
+    .tree {
+        margin-top: 1vh;
+        list-style-type: none;
+    }
+
+    .tree li {
+        margin: 0 0 0.5rem 1rem;
+        position: relative;
+        list-style-type: none;
+    }
+
+    .pointer {
+        cursor: pointer;
+    }
+
+    li.relation {
+        margin: 0;
+    }
+
+    .tree li ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        padding-left: 0;
+    }
+
+    .tree li span {
+        background: #fae0c3;
+        margin: 0 2rem 0.2rem 0;
+        border: 1px solid black;
+        border-radius: 0.5rem;
+        padding: 0.2rem 1rem 0.2rem 1.5rem;
+        display: block;
+        width: 17vw;
+    }
+
+    .tree li span.tree-attribute {
+        margin: 0 2rem 0.2rem 0;
+        background: #fff0e0;
+        border: 1px solid black;
+        border-radius: 0.5rem;
+        padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+        display: block;
+    }
+
+    .plus::before {
+        content: '+';
+        margin: 0;
+        left: 0.6rem;
+        position: absolute;
+        visibility: visible;
+    }
+
+    .plus.open::before {
+        content: "-";
+    }
+
+    .tree li.has-children::before {
+        visibility: visible;
+    }
+
+    .tree li::after {
+        content: none;
+    }
+
+    .tree li.no-children::before {
+        visibility: hidden;
+    }
+
+    .tree .attributes {
+        margin-left: 1.5rem;
+        padding-top: 0.2rem;
+    }
+
+    .tree li.open .attributes {
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div id="treeview" class="tree"></div>
+    <script>
+        rootName = "";
+        rootId = "";
+        selectedId = "";
+        treeData = [];
+
+        function unpaintNode(selectedId) {
+            svg.select('g#'+ selectedId).select("rect")
+                .attr('fill', '#fae0c3');
+        }
+
+        function paintNode(selectedId) {
+            svg.select('g#'+ selectedId).select("rect")
+                .attr('fill', '#fdc897');
+        }
+
+        function createGraph(selected){
+            rootName = selected;
+            localStorage.setItem('root_node_name', selected);
+            let parentElement = document.getElementById('treeview');
+            createNodes(selected, parentElement, true);
+        }
+
+        function createNodes(selected, parentElement, root = false){
+            treeData = []
+            {% for node in nodes %}
+                if ("{{ node.name }}" === selected) {
+                    if ("{{ node.name }}" === rootName) {
+                        rootId = "node_{{ node.id }}";
+                    }
+                    if(selectedId !== "") {
+                        unpaintNode(selectedId);
+                    }
+                    selectedId = "node_{{ node.id }}";
+                    paintNode(selectedId);
+                    const new_node = {label: "{{ node.name }}"};
+                    let attributes = [];
+                    {% for attr in node.attributes %}
+                        attributes.push({ "{{ attr.name }}": "{{ attr.value }}" });
+                    {% endfor %}
+                    new_node.attributes = attributes;
+                    new_node.children = getChildren({{ node.id }});
+                    treeData.push(new_node);
+                }
+            {% endfor %}
+            buildTree(parentElement, treeData, root);
+        }
+
+        function getChildren(node_id) {
+            let ret = []
+            {% for edge in edges %}
+                if ({{ edge.toNode.id }} == node_id){
+                    ret.push({label: "{{ edge.fromNode.name }}" });
+                }
+                if ("{{ edge.directed }}" === "False" && {{ edge.fromNode.id }} == node_id){
+                    ret.push({label: "{{ edge.toNode.name }}" });
+                }
+            {% endfor %}
+            return ret;
+        }
+
+        function buildTree(parentElement, nodes, root=false) {
+            parentElement.innerHTML = ''
+            nodes.forEach(node => {
+                if (root) {
+                    const listItem = document.createElement('li');
+                    const textSpan = document.createElement('span');
+
+                    textSpan.classList.add('pointer');
+                    textSpan.textContent = node.label;
+                    textSpan.classList.add("plus");
+                    listItem.appendChild(textSpan);
+
+                    const attributesDiv = document.createElement('div');
+                    attributesDiv.style.display = 'none';
+                    attributesDiv.classList.add('attributes');
+                    createList(node, attributesDiv);
+
+                    listItem.appendChild(attributesDiv);
+
+                    if (node.children && node.children.length > 0 && node.attributes && node.attributes.length > 0)
+                        listItem.classList.add('has-children');
+
+                    textSpan.addEventListener('click', function () {
+                        paintNode(rootId);
+                        if(selectedId != rootId) {
+                            unpaintNode(selectedId);
+                        }
+                        attributesDiv.style.display = attributesDiv.style.display === 'none' ? 'block' : 'none';
+                        textSpan.classList.toggle('open');
+                    });
+
+                    parentElement.appendChild(listItem);
+                }
+                else{
+                    createList(node, parentElement)
+                }
+            });
+
+
+            function createList(node, attributesDiv){
+                if (node.attributes !== undefined) {
+                    for (let [key, value] of Object.entries(node.attributes)) {
+                        if (Object.keys(value)[0] !== "id" && Object.keys(value)[0] !== "name" && Object.keys(value)[0] !== "attributes") {
+                            const attributeSpan = document.createElement('span');
+                            attributeSpan.classList.add('tree-attribute');
+                            attributeSpan.textContent = `${Object.keys(value)[0]}: ${Object.values(value)[0]}`;
+                            attributesDiv.appendChild(attributeSpan);
+                        }
+                    }
+                }
+
+                const relationList = document.createElement('li');
+                relationList.classList.add('relation');
+
+                const relationSpan = document.createElement('span');
+                relationSpan.classList.add("pointer")
+                relationSpan.classList.add("plus");
+                relationSpan.textContent = "{{ relation }}s";
+
+                const relationDiv = document.createElement('div');
+                relationDiv.style.display = 'none';
+                relationDiv.classList.add('attributes');
+
+                if (node.children && node.children.length > 0){
+                    relationList.appendChild(relationSpan)
+                    const relationElementsList = document.createElement('li');
+                    relationElementsList.classList.add('relation');
+
+                    for (let [key, value] of Object.entries(node.children)) {
+                        const attributeRelationSpan = document.createElement('span');
+                        attributeRelationSpan.classList.add("pointer")
+                        attributeRelationSpan.classList.add("plus");
+                        attributeRelationSpan.textContent = value.label;
+
+                        const attributesDiv1 = document.createElement('div');
+                        attributesDiv1.classList.add('attributes');
+                        attributesDiv1.style.display = 'none';
+
+                        attributeRelationSpan.addEventListener('click', function () {
+                            createNodes(value.label, attributesDiv1);
+
+                            if (attributesDiv1.style.display === 'block') {
+                                attributesDiv1.style.display = 'none';
+                                attributeRelationSpan.classList.toggle('open');
+                            }
+                            else {
+                                if (attributeRelationSpan.nextSibling)
+                                    relationElementsList.insertBefore(attributesDiv1, attributeRelationSpan.nextSibling);
+                                else
+                                    relationElementsList.appendChild(attributesDiv1);
+
+                                attributesDiv1.style.display = 'block';
+                                attributeRelationSpan.classList.toggle('open');
+                            }
+                        });
+                        relationElementsList.appendChild(attributeRelationSpan);
+                    }
+
+                    relationDiv.appendChild(relationElementsList);
+                    relationList.appendChild(relationDiv);
+                    attributesDiv.appendChild(relationList);
+                }
+
+                relationSpan.addEventListener('click', function () {
+                    relationDiv.style.display = relationDiv.style.display === 'none' ? 'block' : 'none';
+                    relationSpan.classList.toggle('open');
+                });
+                // return attributesDiv;
+            }
+        }
+    </script>
+{% endblock %}

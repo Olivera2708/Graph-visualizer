@@ -1,0 +1,4 @@
+Metadata-Version: 2.1
+Name: core
+Version: 0.1
+Requires-Dist: Django>=2.1

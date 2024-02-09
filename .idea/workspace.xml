@@ -5,30 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bb83a6bf-643c-431d-91f5-9055a64273b9" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/BlockVisualizer/BlockVisualizer.egg-info/PKG-INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BlockVisualizer/BlockVisualizer.egg-info/SOURCES.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BlockVisualizer/BlockVisualizer.egg-info/dependency_links.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BlockVisualizer/BlockVisualizer.egg-info/entry_points.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BlockVisualizer/BlockVisualizer.egg-info/not-zip-safe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BlockVisualizer/BlockVisualizer.egg-info/top_level.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/SimpleVisualizer.egg-info/PKG-INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/SimpleVisualizer.egg-info/SOURCES.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/SimpleVisualizer.egg-info/dependency_links.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/SimpleVisualizer.egg-info/entry_points.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/SimpleVisualizer.egg-info/not-zip-safe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SimpleVisualizer/SimpleVisualizer.egg-info/top_level.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source.egg-info/PKG-INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source.egg-info/SOURCES.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source.egg-info/dependency_links.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source.egg-info/entry_points.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source.egg-info/not-zip-safe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_data_source/json_data_source.egg-info/top_level.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/xml_data_source/xml_data_source.egg-info/PKG-INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/xml_data_source/xml_data_source.egg-info/SOURCES.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/xml_data_source/xml_data_source.egg-info/dependency_links.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/xml_data_source/xml_data_source.egg-info/entry_points.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/xml_data_source/xml_data_source.egg-info/not-zip-safe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/xml_data_source/xml_data_source.egg-info/top_level.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +45,7 @@
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "refactor-general",
+    "git-widget-placeholder": "documentation-installation",
     "last_opened_file_path": "/Users/olivera/Documents/Graph-visualizer/Graph-visualizer",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
@@ -80,6 +58,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/images" />
       <recent name="$PROJECT_DIR$/core/core/static" />
       <recent name="$PROJECT_DIR$/core" />
     </key>
