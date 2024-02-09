@@ -102,6 +102,7 @@
 
         function addFilter() {
             const filterValue = document.getElementById('filter').value.trim();
+            document.getElementById('filter').value = '';
             const expressionRegex = /^\s*[\w\d\s,.\-()]+\s*(==|>|>=|<|<=|!=)\s*[\w\d\s,.\-()]+\s*$/;
             if (!expressionRegex.test(filterValue)) {
                 showError("Required format for filter: 'expression operator expression'."

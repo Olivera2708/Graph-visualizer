@@ -118,6 +118,7 @@
                         rootId = "node_{{ node.id }}";
                     }
                     if(selectedId !== "") {
+                        unpaintNode(rootId);
                         unpaintNode(selectedId);
                     }
                     selectedId = "node_{{ node.id }}";

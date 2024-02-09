@@ -93,22 +93,22 @@
         });
 
         var force = d3.layout.force()
-            .size([2000, 2000])
+            .size([1000, 700])
             .nodes(d3.values(nodes))
             .links(edges)
             .on("tick", tick)
-            .linkDistance(6000)
-            .charge(-12000)
+            .linkDistance(3000)
+            .charge(-6000)
             .start();
 
-        var initialScale = 0.05;
+        var initialScale = 0.1;
         var currentTranslate = [0, 0];
 
         var initialTranslate = [(1 - initialScale) * 1000 / 2, (1 - initialScale) * 700 / 2];
 
         var zoom = d3.behavior.zoom()
             .scale(initialScale)
-            .translate(initialTranslate)  // Use the calculated initial translation
+            .translate(initialTranslate)
             .on("zoom", function () {
                 currentTranslate = d3.event.translate;
                 svg.attr("transform", "translate(" + currentTranslate + ")" + " scale(" + d3.event.scale + ")");
@@ -117,7 +117,7 @@
         var svg = d3.select('#svg-main')
             .call(zoom)
             .append("g")
-            .attr("transform", "translate(" + initialTranslate + ") scale(" + initialScale + ")"); // Set initial position directly
+            .attr("transform", "translate(" + initialTranslate + ") scale(" + initialScale + ")");
 
 
         var link = svg.selectAll('.link')
@@ -174,7 +174,7 @@
 
         function showGraph(d) {
             var textSize = 20;
-            height = textSize + 10;
+            var height = textSize + 10;
 
             var g = d3.select("g#" + d.id);
 
@@ -188,7 +188,7 @@
                 .attr('fill', 'black')
                 .text(d.name);
 
-            var width = textElement.node().getBBox().width + 20;
+            var width = textElement.node().getBBox().width;
 
             var attributeInfo = "";
             var attributeName = "";
@@ -203,7 +203,7 @@
 
                 var textAttribute = g
                 .append('text')
-                .attr('x', 10)
+                .attr('x', 0)
                 .attr('y', 21 + (i + 1) * 25)
                 .attr('text-anchor', 'middle')
                 .attr('font-size', textSize)
@@ -211,14 +211,14 @@
                 .attr('fill', 'black')
                 .text(attributeInfo.substring(0, 50));
 
-                var attributeWidth = textAttribute.node().getBBox().width + 20;
+                var attributeWidth = textAttribute.node().getBBox().width;
                 maxAttributeNameWidth = Math.max(maxAttributeNameWidth, attributeWidth);
 
 
                 textAttribute.remove();
             }
 
-            width = Math.max(width, maxAttributeNameWidth + 30);
+            width = Math.max(width, maxAttributeNameWidth) - 10;
             map.set(d.id, width)
             height = textSize + 10 + (split + 1) * 25;
 
@@ -246,6 +246,7 @@
                 .attr('fill', 'black')
                 .text(d.name);
             split = 0;
+            let text = ""
             for (var i = 0; i < d.attributes.length; i++) {
                 attributeName = d.attributes[i].name.replace(/_/g, ' ');
                 attributeInfo = `${attributeName}:  ${d.attributes[i].value}`;
@@ -259,24 +260,32 @@
                         currentLine += (currentLine === '' ? '' : ' ') + word;
                     } else {
                         lines.push(currentLine);
+                        text+=currentLine+"\n";
                         currentLine = word;
                     }
                 });
 
                 lines.push(currentLine);
+                text+=currentLine+"\n";
 
-                for (var j = 0; j < lines.length; j++) {
-                    g.append('text')
-                        .attr('x', 10)
-                        .attr('y', 21 + (split + 1 + j) * 25)
-                        .attr('text-anchor', 'start')
-                        .attr('font-size', textSize)
-                        .attr('font-family', 'sans-serif')
-                        .attr('fill', 'black')
-                        .text(lines[j]);
-                }
                 split+=lines.length;
             }
+            console.log(text);
+            const textWithLineBreaks = text.replace(/\n/g, "<br>");
+
+            const foreignObject = g.append("foreignObject")
+                .attr("x", 20)
+                .attr("y", 46)
+                .attr("width", width)
+                .attr("height", height - textSize - 10);
+
+            foreignObject.append("xhtml:div")
+                .style("font-size", textSize)
+                .style("font-family", "sans-serif")
+                .style("color", "black")
+                .style("line-height", "1.5")
+                .style("word-spacing", "2px")
+                .html(textWithLineBreaks);
         }
 
         function tick(e) {
