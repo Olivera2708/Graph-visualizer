@@ -107,9 +107,6 @@
                     return;
                 }
                 svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
-
-                let zoomEvent = new CustomEvent('mainZoom');
-                document.dispatchEvent(zoomEvent);
             });
 
         var svg = d3.select('#svg-main')
