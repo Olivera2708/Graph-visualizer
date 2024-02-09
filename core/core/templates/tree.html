@@ -88,11 +88,24 @@
 {% block content %}
     <div id="treeview" class="tree"></div>
     <script>
+        rootName = "";
+        rootId = "";
+        selectedId = "";
         treeData = [];
 
-        function createGraph(selected){
-            localStorage.setItem('root_node_name', selected);
+        function unpaintNode(selectedId) {
+            svg.select('g#'+ selectedId).select("rect")
+                .attr('fill', '#fae0c3');
+        }
 
+        function paintNode(selectedId) {
+            svg.select('g#'+ selectedId).select("rect")
+                .attr('fill', '#fdc897');
+        }
+
+        function createGraph(selected){
+            rootName = selected;
+            localStorage.setItem('root_node_name', selected);
             let parentElement = document.getElementById('treeview');
             createNodes(selected, parentElement, true);
         }
@@ -101,8 +114,16 @@
             treeData = []
             {% for node in nodes %}
                 if ("{{ node.name }}" === selected) {
+                    if ("{{ node.name }}" === rootName) {
+                        rootId = "node_{{ node.id }}";
+                    }
+                    if(selectedId !== "") {
+                        unpaintNode(selectedId);
+                    }
+                    selectedId = "node_{{ node.id }}";
+                    paintNode(selectedId);
                     const new_node = {label: "{{ node.name }}"};
-                    let attributes = []
+                    let attributes = [];
                     {% for attr in node.attributes %}
                         attributes.push({ "{{ attr.name }}": "{{ attr.value }}" });
                     {% endfor %}
@@ -150,6 +171,10 @@
                         listItem.classList.add('has-children');
 
                     textSpan.addEventListener('click', function () {
+                        paintNode(rootId);
+                        if(selectedId != rootId) {
+                            unpaintNode(selectedId);
+                        }
                         attributesDiv.style.display = attributesDiv.style.display === 'none' ? 'block' : 'none';
                         textSpan.classList.toggle('open');
                     });
@@ -160,6 +185,7 @@
                     createList(node, parentElement)
                 }
             });
+
 
             function createList(node, attributesDiv){
                 if (node.attributes !== undefined) {
