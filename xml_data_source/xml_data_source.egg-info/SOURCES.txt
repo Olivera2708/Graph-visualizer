@@ -1,9 +1,0 @@
-setup.py
-xml_data_source/__init__.py
-xml_data_source/data_source_loader.py
-xml_data_source.egg-info/PKG-INFO
-xml_data_source.egg-info/SOURCES.txt
-xml_data_source.egg-info/dependency_links.txt
-xml_data_source.egg-info/entry_points.txt
-xml_data_source.egg-info/not-zip-safe
-xml_data_source.egg-info/top_level.txt

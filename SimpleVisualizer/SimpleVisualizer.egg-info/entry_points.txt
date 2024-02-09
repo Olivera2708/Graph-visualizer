@@ -1,2 +1,0 @@
-[visualizer]
-simple_visualizer = simpleVisualizer.simpleVisualizer:SimpleVisualizer
