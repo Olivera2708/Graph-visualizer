@@ -91,6 +91,7 @@
         rootName = "";
         rootId = "";
         selectedId = "";
+        selectedName = "";
         treeData = [];
 
         function unpaintNode(selectedId) {
@@ -101,6 +102,26 @@
         function paintNode(selectedId) {
             svg.select('g#'+ selectedId).select("rect")
                 .attr('fill', '#fdc897');
+        }
+
+        function unpaintTreeNode(selectedName) {
+            const spans = document.getElementById('treeview').getElementsByTagName('span');
+
+            for (let i = 0; i < spans.length; i++) {
+                if (spans[i].textContent === selectedName) {
+                   spans[i].style.backgroundColor = '#fae0c3';
+                }
+            }
+        }
+
+        function paintTreeNode(selectedName) {
+            const spans = document.getElementById('treeview').getElementsByTagName('span');
+
+            for (let i = 0; i < spans.length; i++) {
+                if (spans[i].textContent === selectedName) {
+                   spans[i].style.backgroundColor = '#fdc897';
+                }
+            }
         }
 
         function createGraph(selected){
@@ -118,9 +139,13 @@
                         rootId = "node_{{ node.id }}";
                     }
                     if(selectedId !== "") {
+                        unpaintNode(rootId);
+                        unpaintTreeNode(rootName);
                         unpaintNode(selectedId);
+                        unpaintTreeNode(selectedName);
                     }
                     selectedId = "node_{{ node.id }}";
+                    selectedName = "{{ node.name }}";
                     paintNode(selectedId);
                     const new_node = {label: "{{ node.name }}"};
                     let attributes = [];
@@ -133,6 +158,7 @@
                 }
             {% endfor %}
             buildTree(parentElement, treeData, root);
+            paintTreeNode(selectedName);
         }
 
         function getChildren(node_id) {
@@ -172,8 +198,10 @@
 
                     textSpan.addEventListener('click', function () {
                         paintNode(rootId);
+                        paintTreeNode(rootName);
                         if(selectedId != rootId) {
                             unpaintNode(selectedId);
+                            unpaintTreeNode(selectedName);
                         }
                         attributesDiv.style.display = attributesDiv.style.display === 'none' ? 'block' : 'none';
                         textSpan.classList.toggle('open');
