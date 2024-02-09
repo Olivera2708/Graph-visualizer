@@ -40,9 +40,6 @@
     <svg id="bird_view_svg" class="bird-svg"></svg>
 </div>
 <script>
-    document.addEventListener('mainZoom', function () {
-        updateViewportRect();
-    });
     function birdView(e)
     {
         isLoaded = true;
@@ -80,11 +77,12 @@
         let mainViewBBox = mainViewG.node().getBoundingClientRect();
 
         let gCanvas = d3.select(".bird-svg").select("g").node().getBoundingClientRect();
+        let searchFilterHeight = d3.select(".search-filter").node().getBoundingClientRect().height;
 
         let x = (window.innerWidth / 4 - mainViewBBox.left) / (mainViewBBox.width / gCanvas.width);
-        let y = (50 - mainViewBBox.top) / (mainViewBBox.height / gCanvas.height);
+        let y = (searchFilterHeight - mainViewBBox.top) / (mainViewBBox.height / gCanvas.height);
         let width = gCanvas.width / (mainViewBBox.width / (window.innerWidth*0.75));
-        let height = gCanvas.height / (mainViewBBox.height / (window.innerHeight - 50));
+        let height = gCanvas.height / (mainViewBBox.height / (window.innerHeight - searchFilterHeight));
 
         d3.select("#viewport")
             .attr("x", x)
