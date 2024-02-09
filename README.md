@@ -26,6 +26,11 @@ Search And Filter component lets the user search the graph and apply filters on 
 
 ## Installation
 
+### Open Terminal and position inside desired folder
+```bash
+cd folder_name
+```
+
 ### Create virtual environment
 
 #### For Windows users:
