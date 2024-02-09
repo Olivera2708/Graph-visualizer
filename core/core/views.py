@@ -28,6 +28,7 @@ def get_data_source_plugins(request):
     ids = [plugin.id() for plugin in config.data_source_plugins]
     return JsonResponse({'plugins': ids})
 
+
 def get_visualization_options(request):
     config = apps.get_app_config('core')
     ids = [plugin.id() for plugin in config.visualizer_plugins]
@@ -90,6 +91,7 @@ def get_current_workspace(request):
         response = {}
     return JsonResponse(response)
 
+
 def check_filter(request):
     is_valid, message = validate_filter(request.POST.get('filter_value'))
     response = {'is_valid': is_valid,
@@ -108,7 +110,7 @@ def view(request):
     config = apps.get_app_config('core')
     visualizer_plugins = config.visualizer_plugins
 
-    if not config.selected_workspace:
+    if not config.selected_workspace or visualizer_id == '':
         return JsonResponse({"template": ""})
 
     try:
@@ -116,7 +118,6 @@ def view(request):
 
         search_graph(graph, search_query)
         filter_graph(graph, filter_params)
-        print(len(graph.nodes))
         html = run_visualisation_plugins(visualizer_plugins, visualizer_id, graph)
         tree_html = load_tree(graph)
         bird_html = load_bird(graph)
@@ -230,6 +231,7 @@ def validate_filter(filter_param):
         message = f"No such attribute as '{name_expression}'."
 
     return is_valid, message
+
 
 def filter_graph(graph, filter_params):
     removed_nodes = []

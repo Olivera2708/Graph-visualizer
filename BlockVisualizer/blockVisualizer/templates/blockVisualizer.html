@@ -143,7 +143,7 @@
 
                 d3.event.stopPropagation();
 
-                createGraph(d.name);
+                createGraph(d.name, d.id);
             })
             .call(force.drag);
 
@@ -171,7 +171,6 @@
             });
 
         node.call(drag);
-
 
         function showGraph(d) {
             var textSize = 20;

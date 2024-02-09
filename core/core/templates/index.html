@@ -109,8 +109,6 @@
                 +"\n Allowed operators: ==,!=,<,>,<=,>=");
                 return
             }
-
-                console.log()
             let data = {}
             data.filter_value = filterValue
             data.csrfmiddlewaretoken = '{{ csrf_token }}'
@@ -239,9 +237,7 @@
                 url: "{% url 'get-workspace' %}",
                 success: function (response) {
                   showTabs();
-                  getVisualisationOptions();
-                  loadParams(response.search_param, response.filter_params);
-                  submitForm(response.root_node);
+                  getVisualisationOptions(response);
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
@@ -304,7 +300,7 @@
             });
         });
 
-        function getVisualisationOptions() {
+        function getVisualisationOptions(res) {
             $.ajax({
                 url: '{% url "visualization-options" %}',
                 type: 'GET',
@@ -314,6 +310,9 @@
                     $.each(response.options, function(index, value) {
                         dropdown.append($('<option>').text(value).attr('value', value));
                     });
+
+                    loadParams(res.search_param, res.filter_params);
+                    submitForm(res.root_node);
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
